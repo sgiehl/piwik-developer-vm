@@ -17,5 +17,9 @@ Vagrant.configure('2') do |config|
       vb.gui    = false
       vb.memory = 2048
     end
+
+    piwik.vm.provision 'bootstrap',
+      :type => 'shell',
+      :path => 'bootstrap.sh'
   end
 end
