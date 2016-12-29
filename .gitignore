@@ -1,1 +1,3 @@
 /.vagrant/
+/berks-cookbooks/
+/Berksfile.lock

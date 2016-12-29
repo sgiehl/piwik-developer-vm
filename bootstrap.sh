@@ -28,3 +28,7 @@ command -v berks >/dev/null 2>&1 || {
   dpkg -i "${CHEFDK_PKG}"
   rm -f "${CHEFDK_PKG}"
 }
+
+echo 'Updating Chef dependencies...'
+cd /vagrant
+berks vendor
