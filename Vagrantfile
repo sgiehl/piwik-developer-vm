@@ -28,5 +28,11 @@ Vagrant.configure('2') do |config|
     piwik.vm.provision 'bootstrap',
       :type => 'shell',
       :path => 'bootstrap.sh'
+
+      piwik.vm.provision 'chef_solo' do |chef|
+        chef.cookbooks_path = %w(berks-cookbooks cookbooks)
+
+        chef.add_recipe 'piwik'
+      end
   end
 end
