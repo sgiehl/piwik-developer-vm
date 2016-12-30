@@ -4,3 +4,5 @@ packages.each do |pkg|
   apt_package pkg do
   end
 end
+
+include_recipe 'composer::self_update'
