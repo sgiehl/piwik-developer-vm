@@ -2,6 +2,13 @@
 # vi: set ft=ruby :
 
 Vagrant.configure('2') do |config|
+  if Vagrant.has_plugin?('vagrant-hostmanager')
+    config.hostmanager.enabled           = true
+    config.hostmanager.manage_host       = true
+    config.hostmanager.ignore_private_ip = false
+    config.hostmanager.include_offline   = true
+  end
+
   config.ssh.forward_agent = true
 
   config.vm.define 'piwik' do |piwik|
