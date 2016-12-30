@@ -1,6 +1,8 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
+Kernel.load('./config.rb')
+
 Vagrant.configure('2') do |config|
   if Vagrant.has_plugin?('vagrant-hostmanager')
     config.hostmanager.enabled           = true
@@ -16,6 +18,11 @@ Vagrant.configure('2') do |config|
     piwik.vm.hostname = 'dev.piwik.org'
 
     piwik.vm.network 'private_network', ip: '192.168.99.100'
+
+    piwik.vm.synced_folder Piwik::Config.source,
+      '/srv/piwik',
+        owner: 'vagrant',
+        group: 'vagrant'
 
     piwik.vm.provider 'virtualbox' do |vb|
       vb.customize ['modifyvm', :id, '--name', 'piwik']
