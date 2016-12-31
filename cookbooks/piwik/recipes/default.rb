@@ -32,3 +32,13 @@ end
 
 apache_module 'proxy_fcgi' do
 end
+
+
+php_fpm_pool 'piwik' do
+  user   'vagrant'
+  group  'vagrant'
+
+  listen       '127.0.0.1:9000'
+  listen_user  'vagrant'
+  listen_group 'vagrant'
+end
