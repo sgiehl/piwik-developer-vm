@@ -21,3 +21,14 @@ composer_project piwik_source do
   quiet  true
   action composer_action
 end
+
+
+apache_module 'php5' do
+  enable false
+end
+
+apache_module 'proxy' do
+end
+
+apache_module 'proxy_fcgi' do
+end
