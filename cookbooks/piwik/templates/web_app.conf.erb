@@ -1,0 +1,13 @@
+<VirtualHost *:<%= @params[:server_port] %>>
+  ServerName   <%= @params[:server_name] %>
+  DocumentRoot <%= @params[:docroot] %>
+
+  <Directory <%= @params[:docroot] %>>
+    Options FollowSymLinks
+    AllowOverride All
+
+    Require all granted
+  </Directory>
+
+  ProxyPassMatch "^/.*\.php(/.*)?$" "fcgi://localhost:9000/<%= @params[:docroot] %>/"
+</VirtualHost>

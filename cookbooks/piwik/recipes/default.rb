@@ -1,4 +1,4 @@
-packages = %w(mysql-server php5 php5-curl php5-mysql)
+packages = %w(mysql-server php5 php5-curl php5-gd php5-mysql)
 
 packages.each do |pkg|
   apt_package pkg do
@@ -41,4 +41,18 @@ php_fpm_pool 'piwik' do
   listen       '127.0.0.1:9000'
   listen_user  'vagrant'
   listen_group 'vagrant'
+end
+
+
+web_app 'piwik' do
+  server_name 'dev.piwik.org'
+  docroot     "#{piwik_source}"
+end
+
+execute 'piwik_database' do
+  command 'mysql -uroot -e \'CREATE DATABASE IF NOT EXISTS `piwik`\''
+end
+
+execute 'piwik_database_user' do
+  command 'mysql -uroot -e \'GRANT ALL ON `piwik`.* TO "piwik"@"localhost" IDENTIFIED BY "piwik"\''
 end
