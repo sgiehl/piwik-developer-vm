@@ -1,7 +1,12 @@
 # package setup
 include_recipe 'apt'
 
-packages = %w(mysql-server php5 php5-curl php5-gd php5-mysql)
+packages = %w(git git-lfs mysql-server openjdk-7-jre
+              php5 php5-curl php5-gd php5-mysql)
+
+packagecloud_repo 'github/git-lfs' do
+  type 'deb'
+end
 
 packagecloud_repo 'github/git-lfs' do
   type 'deb'
@@ -48,6 +53,10 @@ php_fpm_pool 'piwik' do
   listen_group 'vagrant'
 end
 
+# redis setup
+include_recipe 'redisio'
+include_recipe 'redisio::enable'
+
 # application setup
 web_app 'piwik' do
   server_name node['piwik']['server_name']
@@ -58,7 +67,15 @@ execute 'piwik_database' do
   command 'mysql -uroot -e \'CREATE DATABASE IF NOT EXISTS `piwik`\''
 end
 
+execute 'piwik_tests_database' do
+  command 'mysql -uroot -e \'CREATE DATABASE IF NOT EXISTS `piwik_tests`\''
+end
+
 execute 'piwik_database_user' do
-  command 'mysql -uroot -e \'GRANT ALL ON `piwik`.*'\
-          ' TO "piwik"@"localhost" IDENTIFIED BY "piwik"\''
+  command <<-USERSQL
+  mysql -uroot -e '
+      GRANT ALL ON `piwik`.* TO "piwik"@"localhost" IDENTIFIED BY "piwik";
+      GRANT ALL ON `piwik_tests`.* TO "piwik"@"localhost" IDENTIFIED BY "piwik";
+  '
+  USERSQL
 end
