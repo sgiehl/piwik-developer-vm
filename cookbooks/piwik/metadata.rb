@@ -10,3 +10,4 @@ source_url 'http://github.com'
 
 depends 'apache2'
 depends 'composer'
+depends 'packagecloud'

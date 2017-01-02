@@ -1,8 +1,14 @@
-# apt package setup
+# package setup
+include_recipe 'apt'
+
 packages = %w(mysql-server php5 php5-curl php5-gd php5-mysql)
 
+packagecloud_repo 'github/git-lfs' do
+  type 'deb'
+end
+
 packages.each do |pkg|
-  apt_package pkg do
+  package pkg do
   end
 end
 
