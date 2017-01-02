@@ -45,7 +45,7 @@ end
 
 
 web_app 'piwik' do
-  server_name 'dev.piwik.org'
+  server_name node['piwik']['server_name']
   docroot     "#{piwik_source}"
 end
 
