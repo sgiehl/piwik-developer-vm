@@ -2,6 +2,10 @@
 # vi: set ft=ruby :
 
 Kernel.load('./config.rb')
+Kernel.load('./plugins/piwik.rb')
+
+vm = Piwik::DevVM.new()
+vm.check_requirements!
 
 Vagrant.configure('2') do |config|
   if Vagrant.has_plugin?('vagrant-hostmanager')
