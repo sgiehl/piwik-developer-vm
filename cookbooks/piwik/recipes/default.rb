@@ -1,3 +1,4 @@
+# apt package setup
 packages = %w(mysql-server php5 php5-curl php5-gd php5-mysql)
 
 packages.each do |pkg|
@@ -5,14 +6,12 @@ packages.each do |pkg|
   end
 end
 
+# composer setup
+piwik_source = '/srv/piwik'
+piwik_vendor = "#{piwik_source}/vendor"
 
 composer_action = :install
-piwik_source    = '/srv/piwik'
-piwik_vendor    = "#{piwik_source}/vendor"
-
-if File.directory?(piwik_vendor)
-  composer_action = :update
-end
+composer_action = :update if File.directory?(piwik_vendor)
 
 include_recipe 'composer::self_update'
 
@@ -22,7 +21,7 @@ composer_project piwik_source do
   action composer_action
 end
 
-
+# apache setup
 apache_module 'php5' do
   enable false
 end
@@ -33,7 +32,7 @@ end
 apache_module 'proxy_fcgi' do
 end
 
-
+# php-fpm setup
 php_fpm_pool 'piwik' do
   user   'vagrant'
   group  'vagrant'
@@ -43,10 +42,10 @@ php_fpm_pool 'piwik' do
   listen_group 'vagrant'
 end
 
-
+# application setup
 web_app 'piwik' do
   server_name node['piwik']['server_name']
-  docroot     "#{piwik_source}"
+  docroot     piwik_source
 end
 
 execute 'piwik_database' do
@@ -54,5 +53,6 @@ execute 'piwik_database' do
 end
 
 execute 'piwik_database_user' do
-  command 'mysql -uroot -e \'GRANT ALL ON `piwik`.* TO "piwik"@"localhost" IDENTIFIED BY "piwik"\''
+  command 'mysql -uroot -e \'GRANT ALL ON `piwik`.*'\
+          ' TO "piwik"@"localhost" IDENTIFIED BY "piwik"\''
 end
