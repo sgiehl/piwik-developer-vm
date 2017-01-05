@@ -9,6 +9,7 @@ issues_url 'http://github.com'
 source_url 'http://github.com'
 
 depends 'apache2'
+depends 'apt'
 depends 'composer'
 depends 'packagecloud'
 depends 'redisio'
