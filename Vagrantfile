@@ -1,29 +1,31 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
 
-Kernel.load('./config.rb')
 Kernel.load('./plugins/piwik.rb')
 
-vm = Piwik::DevVM.new()
+config_file = File.expand_path('./config.rb', File.dirname(__FILE__))
+config      = Piwik::Config.new(config_file)
+vm          = Piwik::DevVM.new(config)
+
 vm.check_requirements!
 
-Vagrant.configure('2') do |config|
+Vagrant.configure('2') do |global|
   if Vagrant.has_plugin?('vagrant-hostmanager')
-    config.hostmanager.enabled           = true
-    config.hostmanager.manage_host       = true
-    config.hostmanager.ignore_private_ip = false
-    config.hostmanager.include_offline   = true
+    global.hostmanager.enabled           = true
+    global.hostmanager.manage_host       = true
+    global.hostmanager.ignore_private_ip = false
+    global.hostmanager.include_offline   = true
   end
 
-  config.ssh.forward_agent = true
+  global.ssh.forward_agent = true
 
-  config.vm.define 'piwik' do |piwik|
+  global.vm.define 'piwik' do |piwik|
     piwik.vm.box      = 'threatstack/ubuntu-14.04-amd64'
-    piwik.vm.hostname = Piwik::Config.server_name
+    piwik.vm.hostname = config.server_name
 
     piwik.vm.network 'private_network', ip: '192.168.99.100'
 
-    piwik.vm.synced_folder Piwik::Config.source,
+    piwik.vm.synced_folder config.source,
       '/srv/piwik',
         owner: 'vagrant',
         group: 'vagrant'

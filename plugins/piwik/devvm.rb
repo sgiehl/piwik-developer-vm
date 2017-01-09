@@ -3,8 +3,9 @@ module Piwik
   class DevVM
     REPO = 'https://github.com/piwik/piwik.git'.freeze
 
-    def initialize
-      @ui = Vagrant::UI::Colored.new
+    def initialize(config)
+      @config = config
+      @ui     = Vagrant::UI::Colored.new
     end
 
     # Checks various requirements for the box to properly come up.
@@ -14,10 +15,9 @@ module Piwik
     def check_requirements!
       return unless Command.up?
 
-      source   = Piwik::Config.source
-      piwik_js = File.join(source, 'piwik.js')
+      piwik_js = File.join(@config.source, 'piwik.js')
 
-      error_source_missing(source) unless File.exist?(piwik_js)
+      error_source_missing(@config.source) unless File.exist?(piwik_js)
     end
 
     private
