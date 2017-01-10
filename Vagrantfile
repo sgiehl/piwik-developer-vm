@@ -19,7 +19,7 @@ Vagrant.configure('2') do |global|
 
   global.ssh.forward_agent = true
 
-  global.vm.define 'piwik' do |piwik|
+  global.vm.define config.name do |piwik|
     piwik.vm.box      = 'threatstack/ubuntu-14.04-amd64'
     piwik.vm.hostname = config.server_name
 
