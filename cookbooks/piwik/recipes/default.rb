@@ -8,10 +8,6 @@ packagecloud_repo 'github/git-lfs' do
   type 'deb'
 end
 
-packagecloud_repo 'github/git-lfs' do
-  type 'deb'
-end
-
 packages.each do |pkg|
   package pkg do
   end
