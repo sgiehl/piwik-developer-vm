@@ -8,6 +8,7 @@ puts config.server_name
 puts config.source
 
 default['piwik']['server_name'] = config.server_name
+default['piwik']['type']        = config.type
 
 default['redisio']['bin_path']        = '/usr/bin'
 default['redisio']['package_install'] = true

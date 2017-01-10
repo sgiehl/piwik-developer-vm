@@ -1,11 +1,14 @@
 # package setup
 include_recipe 'apt'
 
-packages = %w(git git-lfs mysql-server openjdk-7-jre
-              php5 php5-curl php5-gd php5-mysql)
+packages = %w(mysql-server php5 php5-curl php5-gd php5-mysql)
 
-packagecloud_repo 'github/git-lfs' do
-  type 'deb'
+unless 'minimal' == node['piwik']['type']
+  packages += %w(git git-lfs openjdk-7-jre)
+
+  packagecloud_repo 'github/git-lfs' do
+    type 'deb'
+  end
 end
 
 packages.each do |pkg|
@@ -50,8 +53,10 @@ php_fpm_pool 'piwik' do
 end
 
 # redis setup
-include_recipe 'redisio'
-include_recipe 'redisio::enable'
+unless 'minimal' == node['piwik']['type']
+  include_recipe 'redisio'
+  include_recipe 'redisio::enable'
+end
 
 # application setup
 web_app 'piwik' do
@@ -63,15 +68,24 @@ execute 'piwik_database' do
   command 'mysql -uroot -e \'CREATE DATABASE IF NOT EXISTS `piwik`\''
 end
 
-execute 'piwik_tests_database' do
-  command 'mysql -uroot -e \'CREATE DATABASE IF NOT EXISTS `piwik_tests`\''
-end
-
 execute 'piwik_database_user' do
   command <<-USERSQL
   mysql -uroot -e '
       GRANT ALL ON `piwik`.* TO "piwik"@"localhost" IDENTIFIED BY "piwik";
-      GRANT ALL ON `piwik_tests`.* TO "piwik"@"localhost" IDENTIFIED BY "piwik";
   '
   USERSQL
+end
+
+unless 'minimal' == node['piwik']['type']
+  execute 'piwik_tests_database' do
+    command 'mysql -uroot -e \'CREATE DATABASE IF NOT EXISTS `piwik_tests`\''
+  end
+
+  execute 'piwik_tests_database_user' do
+    command <<-USERSQL
+    mysql -uroot -e '
+        GRANT ALL ON `piwik_tests`.* TO "piwik"@"localhost" IDENTIFIED BY "piwik";
+    '
+    USERSQL
+  end
 end

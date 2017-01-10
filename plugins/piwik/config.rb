@@ -4,6 +4,7 @@ module Piwik
     attr_reader :name
     attr_reader :server_name
     attr_reader :source
+    attr_reader :type
 
     def initialize(config_file)
       import_config(config_file)
@@ -15,6 +16,7 @@ module Piwik
       name        = 'piwik'
       server_name = 'dev.piwik.org'
       source      = '../piwik'
+      type        = 'minimal'
 
       # read config file
       config_file = Pathname.new(config_file) unless config_file.is_a?(Pathname)
@@ -25,6 +27,7 @@ module Piwik
       @name        = name
       @server_name = server_name
       @source      = source
+      @type        = type
     end
   end
 end
