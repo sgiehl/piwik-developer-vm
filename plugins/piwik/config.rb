@@ -5,29 +5,23 @@ module Piwik
     attr_reader :source
 
     def initialize(config_file)
-      set_defaults
       import_config(config_file)
     end
 
     protected
 
-    attr_writer :server_name
-    attr_writer :source
-
     def import_config(config_file)
-      return unless File.exist?(config_file)
+      server_name = 'dev.piwik.org'
+      source      = '../piwik'
 
-      # rubocop:disable UselessAssignment
-      config      = self
+      # read config file
       config_file = Pathname.new(config_file) unless config_file.is_a?(Pathname)
-      # rubocop:enable UselessAssignment
 
-      instance_eval(config_file.read)
-    end
+      instance_eval(config_file.read) if File.exist?(config_file)
+      # /read config file
 
-    def set_defaults
-      @server_name = 'dev.piwik.org'
-      @source      = '../piwik'
+      @server_name = server_name
+      @source      = source
     end
   end
 end
