@@ -17,12 +17,9 @@ packages.each do |pkg|
 end
 
 # composer setup
-piwik_source = '/srv/piwik'
-piwik_vendor = "#{piwik_source}/vendor"
-
 include_recipe 'composer::self_update'
 
-composer_project piwik_source do
+composer_project node['piwik']['docroot'] do
   dev    true
   quiet  true
   action :install
@@ -58,7 +55,7 @@ end
 # application setup
 web_app 'piwik' do
   server_name node['piwik']['server_name']
-  docroot     piwik_source
+  docroot     node['piwik']['docroot']
 end
 
 execute 'piwik_database' do
