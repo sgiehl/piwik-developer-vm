@@ -31,7 +31,7 @@ Vagrant.configure('2') do |global|
         group: 'vagrant'
 
     piwik.vm.provider 'virtualbox' do |vb|
-      vb.customize ['modifyvm', :id, '--name', 'piwik']
+      vb.customize ['modifyvm', :id, '--name', config.name]
 
       vb.cpus   = 2
       vb.gui    = false
