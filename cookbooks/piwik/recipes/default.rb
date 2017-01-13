@@ -1,10 +1,10 @@
 # package setup
 include_recipe 'apt'
 
-packages = %w(mysql-server php5 php5-curl php5-gd php5-mysql)
+packages = %w(git mysql-server php5 php5-curl php5-gd php5-mysql)
 
 unless 'minimal' == node['piwik']['type']
-  packages += %w(git git-lfs openjdk-7-jre)
+  packages += %w(git-lfs openjdk-7-jre)
 
   packagecloud_repo 'github/git-lfs' do
     type 'deb'
@@ -20,15 +20,12 @@ end
 piwik_source = '/srv/piwik'
 piwik_vendor = "#{piwik_source}/vendor"
 
-composer_action = :install
-composer_action = :update if File.directory?(piwik_vendor)
-
 include_recipe 'composer::self_update'
 
 composer_project piwik_source do
   dev    true
   quiet  true
-  action composer_action
+  action :install
 end
 
 # apache setup
