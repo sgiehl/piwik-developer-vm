@@ -9,5 +9,5 @@
     Require all granted
   </Directory>
 
-  ProxyPassMatch "^/.*\.php(/.*)?$" "fcgi://localhost:9000/<%= @params[:docroot] %>/"
+  ProxyPassMatch "^/.*\.php(/.*)?$" "fcgi://localhost:9000/<%= @params[:docroot].gsub(/^\/+|\/+$/, '') %>/"
 </VirtualHost>
