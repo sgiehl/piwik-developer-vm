@@ -3,6 +3,7 @@ driver:
   name: vagrant
   synced_folders:
     - ['../../plugins/', '/vagrant/plugins/']
+    - ['test/integration/fixtures/docroot/', '/srv/piwik/']
 
 provisioner:
   name: chef_solo
