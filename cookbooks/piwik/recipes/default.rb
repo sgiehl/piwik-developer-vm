@@ -36,6 +36,12 @@ end
 apache_module 'proxy_fcgi' do
 end
 
+# mysql setup
+# HACK: ensure mysql is started in docker after installation
+execute 'mysql_start' do # ~FC004
+  command '/etc/init.d/mysql start'
+end
+
 # php-fpm setup
 php_fpm_pool 'piwik' do
   user   'vagrant'
