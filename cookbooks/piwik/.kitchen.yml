@@ -1,0 +1,17 @@
+---
+driver:
+  name: vagrant
+  synced_folders:
+    - ['../../plugins/', '/vagrant/plugins/']
+
+provisioner:
+  name: chef_solo
+
+platforms:
+  - name: ubuntu-14.04
+
+suites:
+  - name: default
+    run_list:
+      - recipe[piwik::default]
+    attributes:
