@@ -30,9 +30,5 @@ command -v berks >/dev/null 2>&1 || {
 }
 
 echo 'Updating Chef dependencies...'
-cd /vagrant
 
-# changed config file as berkshelf uses the same name
-export BERKSHELF_CHEF_CONFIG='/vagrant/berkshelf.config.rb'
-
-berks vendor
+cd /vagrant/cookbooks/piwik && berks vendor
