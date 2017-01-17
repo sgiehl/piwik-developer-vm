@@ -15,4 +15,4 @@ addons:
 script:
   - cookstyle ./cookbooks/
   - foodcritic ./cookbooks/
-  - rubocop ./plugins/
+  - rubocop Vagrantfile ./plugins/
