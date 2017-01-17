@@ -1,5 +1,6 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
+# rubocop:disable BlockLength
 
 Kernel.load('./plugins/piwik.rb')
 
@@ -26,9 +27,9 @@ Vagrant.configure('2') do |global|
     piwik.vm.network 'private_network', ip: '192.168.99.100'
 
     piwik.vm.synced_folder config.source,
-      '/srv/piwik',
-        owner: 'vagrant',
-        group: 'vagrant'
+                           '/srv/piwik',
+                           owner: 'vagrant',
+                           group: 'vagrant'
 
     piwik.vm.provider 'virtualbox' do |vb|
       vb.customize ['modifyvm', :id, '--name', config.name]
@@ -39,13 +40,13 @@ Vagrant.configure('2') do |global|
     end
 
     piwik.vm.provision 'bootstrap',
-      :type => 'shell',
-      :path => 'bootstrap.sh'
+                       type: 'shell',
+                       path: 'bootstrap.sh'
 
-      piwik.vm.provision 'chef_solo' do |chef|
-        chef.cookbooks_path = %w(berks-cookbooks cookbooks)
+    piwik.vm.provision 'chef_solo' do |chef|
+      chef.cookbooks_path = %w(berks-cookbooks cookbooks)
 
-        chef.add_recipe 'piwik'
-      end
+      chef.add_recipe 'piwik'
+    end
   end
 end
