@@ -1,0 +1,18 @@
+---
+driver:
+  name: docker
+  volume:
+    - <%= Dir::pwd %>/../../plugins:/vagrant/plugins:z
+    - <%= Dir::pwd %>/test/integration/fixtures/docroot:/srv/piwik:z
+
+provisioner:
+  name: chef_solo
+
+platforms:
+  - name: ubuntu-14.04
+
+suites:
+  - name: default
+    run_list:
+      - recipe[piwik::default]
+    attributes:
