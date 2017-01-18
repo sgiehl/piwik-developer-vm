@@ -5,3 +5,5 @@ cookbook 'apt', '~> 5.0'
 cookbook 'composer', '~> 2.5'
 cookbook 'packagecloud', '~> 0.2'
 cookbook 'redisio', '~> 2.5'
+
+metadata
