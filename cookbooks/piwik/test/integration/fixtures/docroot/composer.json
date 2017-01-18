@@ -1,0 +1,7 @@
+{
+    "name": "piwik kitchen docroot",
+    "description": "minimal composer.json to use during kitchen tests",
+    "minimum-stability": "stable",
+    "license": "GPL-3.0+",
+    "authors": []
+}
