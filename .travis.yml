@@ -2,8 +2,10 @@ language: ruby
 rvm:
   - 2.2.5
 
-sudo: false
+sudo: required
 dist: trusty
+
+services: docker
 
 addons:
   apt:
@@ -12,7 +14,12 @@ addons:
     packages:
       - chefdk
 
+before_script:
+  - eval "$(chef shell-init bash)"
+  - chef gem install kitchen-docker
+
 script:
   - cookstyle ./cookbooks/
   - foodcritic ./cookbooks/
   - rubocop Vagrantfile ./plugins/
+  - cd ./cookbooks/piwik/ && KITCHEN_YAML='.kitchen.docker.yml' kitchen verify
