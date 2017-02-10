@@ -31,12 +31,11 @@ Vagrant.configure('2') do |global|
                            owner: 'vagrant',
                            group: 'vagrant'
 
-
     if File.directory?(File.expand_path(config.source_device_detector))
-        piwik.vm.synced_folder config.source_device_detector,
-                               '/srv/device-detector',
-                               owner: 'vagrant',
-                               group: 'vagrant'
+      piwik.vm.synced_folder config.source_device_detector,
+                             '/srv/device-detector',
+                             owner: 'vagrant',
+                             group: 'vagrant'
     end
 
     piwik.vm.provider 'virtualbox' do |vb|

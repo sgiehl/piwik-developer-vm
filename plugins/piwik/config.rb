@@ -13,6 +13,7 @@ module Piwik
 
     protected
 
+    # rubocop:disable MethodLength
     def import_config(config_file)
       name                   = 'piwik'
       server_name            = 'dev.piwik.org'
@@ -32,5 +33,6 @@ module Piwik
       @source_device_detector = source_device_detector
       @type                   = type
     end
+    # rubocop:enable MethodLength
   end
 end
