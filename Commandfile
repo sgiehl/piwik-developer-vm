@@ -1,20 +1,26 @@
+Kernel.load('plugins/piwik.rb')
+
+config_file = File.expand_path('config.rb')
+config      = Piwik::Config.new(config_file)
+
 command "console",
     desc: 'Run a Piwik console command',
     parameters: { command: { optional: true, escape: { "*": "\\" }}},
     script: %(cd /srv/piwik && ./console %{command})
 
+if File.directory?(File.expand_path(config.source_device_detector))
+    command "dd-tests",
+        desc: 'Run a device detector tests',
+        parameters: {},
+        script: %(cd /srv/device-detector && /srv/device-detector/vendor/bin/phpunit)
 
-command "dd-tests",
-    desc: 'Run a device detector tests',
-    parameters: {},
-    script: %(cd /srv/device-detector && /srv/device-detector/vendor/bin/phpunit)
+    command "dd-parse",
+        desc: 'Runs a device detection for given user agent',
+        parameters: { agent: {}},
+        script: %(cd /srv/device-detector && php misc/test.php \""%{agent}\"")
 
-command "dd-parse",
-    desc: 'Run a device detector tests',
-    parameters: { agent: {}},
-    script: %(cd /srv/device-detector && php misc/test.php \""%{agent}\"")
-
-command "dd-readme",
-    desc: 'Run a device detector tests',
-    parameters: {},
-    script: %(cd /srv/device-detector && php misc/readme-report.php)
+    command "dd-readme",
+        desc: 'Generates device detector README report',
+        parameters: {},
+        script: %(cd /srv/device-detector && php misc/readme-report.php)
+end

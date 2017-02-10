@@ -26,11 +26,11 @@ composer_project node['piwik']['docroot'] do
 end
 
 if File.directory?(node['piwik']['device_detector'])
-    composer_project node['piwik']['device_detector'] do
-      dev    true
-      quiet  true
-      action :install
-    end
+  composer_project node['piwik']['device_detector'] do
+    dev    true
+    quiet  true
+    action :install
+  end
 end
 
 # apache setup
