@@ -1,0 +1,4 @@
+command "console",
+    desc: 'Run a Piwik console command',
+    parameters: { command: { optional: true, escape: { "*": "\\" }}},
+    script: %(cd /srv/piwik && ./console %{command})
