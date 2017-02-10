@@ -25,6 +25,14 @@ composer_project node['piwik']['docroot'] do
   action :install
 end
 
+if File.directory?(node['piwik']['device_detector'])
+    composer_project node['piwik']['device_detector'] do
+      dev    true
+      quiet  true
+      action :install
+    end
+end
+
 # apache setup
 apache_module 'php5' do
   enable false
