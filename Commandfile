@@ -5,7 +5,7 @@ config      = Piwik::Config.new(config_file)
 
 command "console",
     desc: 'Run a Piwik console command',
-    parameters: { command: { optional: true, escape: { "*": "\\" }}},
+    parameters: { command: { optional: true } },
     script: %(cd /srv/piwik && ./console %{command})
 
 if File.directory?(File.expand_path(config.source_device_detector))
@@ -16,8 +16,8 @@ if File.directory?(File.expand_path(config.source_device_detector))
 
     command "dd-parse",
         desc: 'Runs a device detection for given user agent',
-        parameters: { agent: {}},
-        script: %(cd /srv/device-detector && php misc/test.php \""%{agent}\"")
+        parameters: { agent: {} },
+        script: %(cd /srv/device-detector && php misc/test.php '%{agent}')
 
     command "dd-readme",
         desc: 'Generates device detector README report',
