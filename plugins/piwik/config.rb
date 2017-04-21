@@ -13,6 +13,7 @@ module Piwik
 
     protected
 
+    # rubocop:disable AbcSize
     # rubocop:disable MethodLength
     def import_config(config_file)
       name                   = 'piwik'
@@ -34,5 +35,6 @@ module Piwik
       @type                   = type
     end
     # rubocop:enable MethodLength
+    # rubocop:enable AbcSize
   end
 end
