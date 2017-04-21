@@ -2,6 +2,8 @@ module Piwik
   # Configuration class for the Piwik box
   class Config
     attr_reader :name
+    attr_reader :plugin_glob
+    attr_reader :plugin_pattern
     attr_reader :server_name
     attr_reader :source
     attr_reader :source_device_detector
@@ -22,6 +24,9 @@ module Piwik
       source_device_detector = '../device-detector'
       type                   = 'minimal'
 
+      plugin_glob    = '../{piwik-plugin,plugin}-*/'
+      plugin_pattern = /plugin\-([a-zA-Z]*)$/
+
       # read config file
       config_file = Pathname.new(config_file) unless config_file.is_a?(Pathname)
 
@@ -33,6 +38,9 @@ module Piwik
       @source                 = source
       @source_device_detector = source_device_detector
       @type                   = type
+
+      @plugin_glob    = plugin_glob
+      @plugin_pattern = plugin_pattern
     end
     # rubocop:enable MethodLength
     # rubocop:enable AbcSize

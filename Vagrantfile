@@ -38,6 +38,19 @@ Vagrant.configure('2') do |global|
                              group: 'vagrant'
     end
 
+    if config.plugin_glob && config.plugin_pattern
+      Dir.glob(config.plugin_glob).each do |glob|
+        plugin = config.plugin_pattern.match(File.basename(glob))[1]
+
+        continue unless plugin
+
+        piwik.vm.synced_folder glob,
+                               "/srv/piwik/plugins/#{plugin}",
+                               owner: 'vagrant',
+                               group: 'vagrant'
+      end
+    end
+
     piwik.vm.provider 'virtualbox' do |vb|
       vb.customize ['modifyvm', :id, '--name', config.name]
 
