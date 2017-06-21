@@ -56,11 +56,12 @@ Vagrant.configure('2') do |global|
 
       vb.cpus   = 2
       vb.gui    = false
-      if config.type == 'full'
-          vb.memory = 4096
-      else
-          vb.memory = 2048
-      end
+
+      vb.memory = if 'minimal' == config.type
+                    2048
+                  else
+                    4096
+                  end
     end
 
     piwik.vm.provision 'bootstrap',
