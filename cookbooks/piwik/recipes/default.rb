@@ -32,6 +32,13 @@ composer_project node['piwik']['device_detector'] do
   only_if { File.directory?(node['piwik']['device_detector']) }
 end
 
+unless 'minimal' == node['piwik']['type']
+  # phantomjs setup
+  include_recipe 'phantomjs2::default'
+  # imagemagick setup
+  include_recipe 'imagemagick::default'
+end
+
 # apache setup
 apache_module 'php5' do
   enable false
