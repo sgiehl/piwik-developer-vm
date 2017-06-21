@@ -4,7 +4,7 @@ include_recipe 'apt'
 packages = %w(git mysql-server php5 php5-curl php5-gd php5-mysql php5-xdebug)
 
 unless 'minimal' == node['piwik']['type']
-  packages += %w(git-lfs openjdk-7-jre)
+  packages += %w(git-lfs openjdk-7-jre php5-redis)
 
   packagecloud_repo 'github/git-lfs' do
     type 'deb'
@@ -30,6 +30,13 @@ composer_project node['piwik']['device_detector'] do
   quiet  true
   action :install
   only_if { File.directory?(node['piwik']['device_detector']) }
+end
+
+unless 'minimal' == node['piwik']['type']
+  # phantomjs setup
+  include_recipe 'phantomjs2::default'
+  # imagemagick setup
+  include_recipe 'imagemagick::default'
 end
 
 # apache setup
