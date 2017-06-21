@@ -4,7 +4,7 @@ include_recipe 'apt'
 packages = %w(git mysql-server php5 php5-curl php5-gd php5-mysql php5-xdebug)
 
 unless 'minimal' == node['piwik']['type']
-  packages += %w(git-lfs openjdk-7-jre)
+  packages += %w(git-lfs openjdk-7-jre php5-redis)
 
   packagecloud_repo 'github/git-lfs' do
     type 'deb'
