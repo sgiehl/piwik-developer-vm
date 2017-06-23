@@ -53,7 +53,7 @@ end
 # mysql setup
 # HACK: ensure mysql is started in docker after installation
 execute 'mysql_start' do # ~FC004
-  command '/etc/init.d/mysql start'
+  command '/etc/init.d/mysql start || true'
 end
 
 # php-fpm setup
