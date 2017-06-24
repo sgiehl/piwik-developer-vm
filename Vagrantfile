@@ -16,6 +16,11 @@ Vagrant.configure('2') do |global|
     global.hostmanager.manage_host       = true
     global.hostmanager.ignore_private_ip = false
     global.hostmanager.include_offline   = true
+
+    if File.exist?('/etc/NIXOS')
+      # /etc/hosts is not writable on NixOS
+      global.hostmanager.manage_host = false
+    end
   end
 
   global.ssh.forward_agent = true
