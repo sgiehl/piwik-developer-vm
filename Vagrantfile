@@ -62,7 +62,7 @@ Vagrant.configure('2') do |global|
       vb.cpus   = 2
       vb.gui    = false
 
-      vb.memory = if 'minimal' == config.type
+      vb.memory = if config.type == 'minimal'
                     2048
                   else
                     4096
@@ -74,7 +74,7 @@ Vagrant.configure('2') do |global|
                        path: 'bootstrap.sh'
 
     piwik.vm.provision 'chef_solo' do |chef|
-      chef.cookbooks_path = %w(cookbooks cookbooks/piwik/berks-cookbooks)
+      chef.cookbooks_path = %w[cookbooks cookbooks/piwik/berks-cookbooks]
 
       chef.add_recipe 'piwik'
     end

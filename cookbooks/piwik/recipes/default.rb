@@ -3,7 +3,7 @@ include_recipe 'apt'
 
 packages = %w(git mysql-server php5 php5-curl php5-gd php5-mysql php5-xdebug)
 
-unless 'minimal' == node['piwik']['type']
+unless node['piwik']['type'] == 'minimal'
   packages += %w(git-lfs openjdk-7-jre php5-redis)
 
   packagecloud_repo 'github/git-lfs' do
@@ -32,7 +32,7 @@ composer_project node['piwik']['device_detector'] do
   only_if { File.directory?(node['piwik']['device_detector']) }
 end
 
-unless 'minimal' == node['piwik']['type']
+unless node['piwik']['type'] == 'minimal'
   # phantomjs setup
   include_recipe 'phantomjs2::default'
   # imagemagick setup
@@ -67,7 +67,7 @@ php_fpm_pool 'piwik' do
 end
 
 # redis setup
-unless 'minimal' == node['piwik']['type']
+unless node['piwik']['type'] == 'minimal'
   include_recipe 'redisio'
   include_recipe 'redisio::enable'
 end
@@ -90,7 +90,7 @@ execute 'piwik_database_user' do
   USERSQL
 end
 
-unless 'minimal' == node['piwik']['type']
+unless node['piwik']['type'] == 'minimal'
   execute 'piwik_tests_database' do
     command 'mysql -uroot -e \'CREATE DATABASE IF NOT EXISTS `piwik_tests`\''
   end
