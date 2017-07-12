@@ -1,6 +1,6 @@
-Kernel.load('plugins/piwik.rb')
+Kernel.load(File.expand_path('./plugins/piwik.rb', @env.root_path))
 
-config_file = File.expand_path('config.rb')
+config_file = File.expand_path('./config.rb', @env.root_path)
 config      = Piwik::Config.new(config_file)
 
 command 'console',

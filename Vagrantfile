@@ -2,7 +2,7 @@
 # vi: set ft=ruby :
 # rubocop:disable BlockLength
 
-Kernel.load('./plugins/piwik.rb')
+Kernel.load(File.expand_path('./plugins/piwik.rb', File.dirname(__FILE__)))
 
 config_file = File.expand_path('./config.rb', File.dirname(__FILE__))
 config      = Piwik::Config.new(config_file)
