@@ -8,6 +8,17 @@ command 'console',
     parameters: { command: { optional: true } },
     script: %(cd /srv/piwik && ./console %{command})
 
+command 'dump-export',
+    desc: 'Dumps the piwik database currently used by the machine',
+    script: %([ -d /vagrant/sqldumps ] || mkdir /vagrant/sqldumps;
+              mysqldump -upiwik -ppiwik piwik > /vagrant/sqldumps/piwik.sql)
+
+command 'dump-import',
+    desc: 'Imports a recently created dump (from "dump-export")',
+    script: %([ -f /vagrant/sqldumps/piwik.sql ] \
+                  && mysql -upiwik -ppiwik piwik < /vagrant/sqldumps/piwik.sql \
+                  || true)
+
 # device-detector specific commands
 if File.directory?(File.expand_path(config.source_device_detector))
     command 'dd-tests',
