@@ -19,6 +19,10 @@ command 'dump-import',
                   && mysql -upiwik -ppiwik piwik < /vagrant/sqldumps/piwik.sql \
                   || true)
 
+command 'mysql',
+    desc: 'Opens a mysql console',
+    script: %(mysql -upiwik -ppiwik piwik)
+
 # device-detector specific commands
 if File.directory?(File.expand_path(config.source_device_detector))
     command 'dd-tests',
