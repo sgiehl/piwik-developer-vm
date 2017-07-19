@@ -5,6 +5,9 @@ config      = Piwik::Config.new(config_file)
 
 default['piwik']['docroot']         = '/srv/piwik'
 default['piwik']['device_detector'] = '/srv/device-detector'
+default['piwik']['mysql_database']  = config.mysql_database
+default['piwik']['mysql_password']  = config.mysql_password
+default['piwik']['mysql_username']  = config.mysql_username
 default['piwik']['server_name']     = config.server_name
 default['piwik']['type']            = config.type
 

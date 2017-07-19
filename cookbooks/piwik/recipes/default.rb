@@ -79,26 +79,38 @@ web_app 'piwik' do
 end
 
 execute 'piwik_database' do
-  command 'mysql -uroot -e \'CREATE DATABASE IF NOT EXISTS `piwik`\''
+  command <<-DBSQL
+  mysql -uroot -e '
+      CREATE DATABASE IF NOT EXISTS \`#{node['piwik']['mysql_database']}\`
+  '
+  DBSQL
 end
 
 execute 'piwik_database_user' do
   command <<-USERSQL
   mysql -uroot -e '
-      GRANT ALL ON `piwik`.* TO "piwik"@"localhost" IDENTIFIED BY "piwik";
+      GRANT ALL ON \`#{node['piwik']['mysql_database']}\`.*
+      TO "#{node['piwik']['mysql_username']}"@"localhost"
+      IDENTIFIED BY "#{node['piwik']['mysql_password']}";
   '
   USERSQL
 end
 
 unless node['piwik']['type'] == 'minimal'
   execute 'piwik_tests_database' do
-    command 'mysql -uroot -e \'CREATE DATABASE IF NOT EXISTS `piwik_tests`\''
+    command <<-DBSQL
+    mysql -uroot -e '
+        CREATE DATABASE IF NOT EXISTS \`piwik_tests\`
+    '
+    DBSQL
   end
 
   execute 'piwik_tests_database_user' do
     command <<-USERSQL
     mysql -uroot -e '
-        GRANT ALL ON `piwik_tests`.* TO "piwik"@"localhost" IDENTIFIED BY "piwik";
+        GRANT ALL ON \`piwik_tests\`.*
+        TO "piwik"@"localhost"
+        IDENTIFIED BY "piwik";
     '
     USERSQL
   end
