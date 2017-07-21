@@ -1,11 +1,11 @@
 # rubocop:disable UselessAssignment
 
 vm_name = 'piwik'
+vm_type = 'minimal'
 
 server_name            = 'dev.piwik.org'
 source                 = '../piwik'
 source_device_detector = '../device-detector'
-type                   = 'minimal'
 
 mysql_database = 'piwik'
 mysql_password = 'piwik'

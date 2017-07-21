@@ -62,7 +62,7 @@ Vagrant.configure('2') do |global|
       vb.cpus   = 2
       vb.gui    = false
 
-      vb.memory = if config.type == 'minimal'
+      vb.memory = if config.vm_type == 'minimal'
                     2048
                   else
                     4096

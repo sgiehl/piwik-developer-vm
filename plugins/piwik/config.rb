@@ -9,8 +9,8 @@ module Piwik
     attr_reader :server_name
     attr_reader :source
     attr_reader :source_device_detector
-    attr_reader :type
     attr_reader :vm_name
+    attr_reader :vm_type
 
     def initialize(config_file)
       import_config(config_file)
@@ -22,11 +22,11 @@ module Piwik
     # rubocop:disable MethodLength
     def import_config(config_file)
       vm_name = 'piwik'
+      vm_type = 'minimal'
 
       server_name            = 'dev.piwik.org'
       source                 = '../piwik'
       source_device_detector = '../device-detector'
-      type                   = 'minimal'
 
       mysql_database = 'piwik'
       mysql_password = 'piwik'
@@ -42,11 +42,11 @@ module Piwik
       # /read config file
 
       @vm_name = vm_name
+      @vm_type = vm_type
 
       @server_name            = server_name
       @source                 = source
       @source_device_detector = source_device_detector
-      @type                   = type
 
       @mysql_database = mysql_database
       @mysql_password = mysql_password
