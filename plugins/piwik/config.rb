@@ -9,6 +9,7 @@ module Piwik
     attr_reader :server_name
     attr_reader :source
     attr_reader :source_device_detector
+    attr_reader :vm_ip
     attr_reader :vm_name
     attr_reader :vm_type
 
@@ -21,6 +22,7 @@ module Piwik
     # rubocop:disable AbcSize
     # rubocop:disable MethodLength
     def import_config(config_file)
+      vm_ip   = '192.168.99.100'
       vm_name = 'piwik'
       vm_type = 'minimal'
 
@@ -41,6 +43,7 @@ module Piwik
       instance_eval(config_file.read) if File.exist?(config_file)
       # /read config file
 
+      @vm_ip   = vm_ip
       @vm_name = vm_name
       @vm_type = vm_type
 

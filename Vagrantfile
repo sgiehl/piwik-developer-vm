@@ -29,7 +29,7 @@ Vagrant.configure('2') do |global|
     piwik.vm.box      = 'threatstack/ubuntu-14.04-amd64'
     piwik.vm.hostname = config.server_name
 
-    piwik.vm.network 'private_network', ip: '192.168.99.100'
+    piwik.vm.network 'private_network', ip: config.vm_ip
 
     piwik.vm.synced_folder config.source,
                            '/srv/piwik',

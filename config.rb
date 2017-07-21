@@ -1,5 +1,6 @@
 # rubocop:disable UselessAssignment
 
+vm_ip   = '192.168.99.100'
 vm_name = 'piwik'
 vm_type = 'minimal'
 
