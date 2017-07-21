@@ -25,7 +25,7 @@ Vagrant.configure('2') do |global|
 
   global.ssh.forward_agent = true
 
-  global.vm.define config.name do |piwik|
+  global.vm.define config.vm_name do |piwik|
     piwik.vm.box      = 'threatstack/ubuntu-14.04-amd64'
     piwik.vm.hostname = config.server_name
 
@@ -57,7 +57,7 @@ Vagrant.configure('2') do |global|
     end
 
     piwik.vm.provider 'virtualbox' do |vb|
-      vb.customize ['modifyvm', :id, '--name', config.name]
+      vb.customize ['modifyvm', :id, '--name', config.vm_name]
 
       vb.cpus   = 2
       vb.gui    = false

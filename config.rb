@@ -1,6 +1,7 @@
 # rubocop:disable UselessAssignment
 
-name                   = 'piwik'
+vm_name = 'piwik'
+
 server_name            = 'dev.piwik.org'
 source                 = '../piwik'
 source_device_detector = '../device-detector'
