@@ -2,7 +2,6 @@
 driver:
   name: vagrant
   synced_folders:
-    - ['../../berks-cookbooks/', '/vagrant/berks-cookbooks']
     - ['../../plugins/', '/vagrant/plugins/']
     - ['test/integration/fixtures/docroot/', '/srv/piwik/']
 
