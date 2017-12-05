@@ -31,4 +31,4 @@ command -v berks >/dev/null 2>&1 || {
 
 echo 'Updating Chef dependencies...'
 
-cd /vagrant/cookbooks/piwik && berks vendor
+cd /vagrant && berks vendor

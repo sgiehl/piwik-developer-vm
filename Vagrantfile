@@ -74,9 +74,8 @@ Vagrant.configure('2') do |global|
                        path: 'bootstrap.sh'
 
     piwik.vm.provision 'chef_solo' do |chef|
-      chef.cookbooks_path = %w[cookbooks cookbooks/piwik/berks-cookbooks]
-
-      chef.add_recipe 'piwik'
+      chef.cookbooks_path = %w[cookbooks berks-cookbooks]
+      chef.run_list = ['recipe[piwik]']
     end
   end
 end

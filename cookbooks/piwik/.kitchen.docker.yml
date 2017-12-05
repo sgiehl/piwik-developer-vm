@@ -2,12 +2,16 @@
 driver:
   name: docker
   volume:
+    - <%= Dir::pwd %>/../../berks-cookbooks:/vagrant/berks-cookbooks:z
     - <%= Dir::pwd %>/../../plugins:/vagrant/plugins:z
     - <%= Dir::pwd %>/test/integration/fixtures/docroot:/srv/piwik:z
 
 provisioner:
   name: chef_solo
   require_chef_omnibus: 12.17.44
+  cookbooks_path:
+    - /vagrant/berks-cookbooks
+    - <%= Dir::pwd %>
 
 platforms:
   - name: ubuntu-14.04
