@@ -10,6 +10,8 @@ vm          = Piwik::DevVM.new(config)
 
 vm.check_requirements!
 
+chef_run_list = ['recipe[piwik]']
+
 Vagrant.configure('2') do |global|
   if Vagrant.has_plugin?('vagrant-hostmanager')
     global.hostmanager.enabled           = true
@@ -41,6 +43,8 @@ Vagrant.configure('2') do |global|
                              '/srv/device-detector',
                              owner: 'vagrant',
                              group: 'vagrant'
+
+      chef_run_list << 'recipe[piwik-device-detector]'
     end
 
     if config.plugin_glob && config.plugin_pattern
@@ -75,7 +79,7 @@ Vagrant.configure('2') do |global|
 
     piwik.vm.provision 'chef_solo' do |chef|
       chef.cookbooks_path = %w[cookbooks berks-cookbooks]
-      chef.run_list = ['recipe[piwik]']
+      chef.run_list = chef_run_list
     end
   end
 end

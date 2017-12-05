@@ -25,13 +25,6 @@ composer_project node['piwik']['docroot'] do
   action :install
 end
 
-composer_project node['piwik']['device_detector'] do
-  dev    true
-  quiet  true
-  action :install
-  only_if { File.directory?(node['piwik']['device_detector']) }
-end
-
 unless node['piwik']['vm_type'] == 'minimal'
   # phantomjs setup
   include_recipe 'phantomjs2::default'
