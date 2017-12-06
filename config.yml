@@ -1,3 +1,8 @@
+# This is the default configuration file
+# Please use it as reference only
+#
+# If you want to modify the values please
+# create a "config.local.yml" in the same folder
 vm_ip: 192.168.99.100
 vm_name: piwik
 vm_type: minimal

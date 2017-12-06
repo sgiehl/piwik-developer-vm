@@ -4,13 +4,15 @@
 
 Kernel.load(File.expand_path('./plugins/piwik.rb', File.dirname(__FILE__)))
 
-config_file = File.expand_path('./config.yml', File.dirname(__FILE__))
-config      = Piwik::Config.new(config_file)
-vm          = Piwik::DevVM.new(config)
+chef_run_list  = ['recipe[piwik]']
+config         = Piwik::Config.new
+config_default = File.expand_path('./config.yml', File.dirname(__FILE__))
+config_local   = File.expand_path('./config.local.yml', File.dirname(__FILE__))
 
-vm.check_requirements!
+config.parse_file(config_default) if File.exist?(config_default)
+config.parse_file(config_local) if File.exist?(config_local)
 
-chef_run_list = ['recipe[piwik]']
+Piwik::DevVM.new(config).check_requirements!
 
 Vagrant.configure('2') do |global|
   if Vagrant.has_plugin?('vagrant-hostmanager')

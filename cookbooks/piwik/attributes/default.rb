@@ -1,7 +1,11 @@
 Kernel.load('/vagrant/plugins/piwik.rb')
 
-config_file = File.expand_path('/vagrant/config.yml')
-config      = Piwik::Config.new(config_file)
+config         = Piwik::Config.new
+config_default = '/vagrant/config.yml'
+config_local   = '/vagrant/config.local.yml'
+
+config.parse_file(config_default) if File.exist?(config_default)
+config.parse_file(config_local) if File.exist?(config_local)
 
 default['piwik']['vm_type'] = config.get('vm_type')
 
