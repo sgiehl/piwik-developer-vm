@@ -15,14 +15,11 @@ chef_run_list = ['recipe[piwik]']
 Vagrant.configure('2') do |global|
   if Vagrant.has_plugin?('vagrant-hostmanager')
     global.hostmanager.enabled           = true
-    global.hostmanager.manage_host       = true
     global.hostmanager.ignore_private_ip = false
     global.hostmanager.include_offline   = true
 
-    if File.exist?('/etc/NIXOS')
-      # /etc/hosts is not writable on NixOS
-      global.hostmanager.manage_host = false
-    end
+    # /etc/hosts is not writable on NixOS
+    global.hostmanager.manage_host = !File.exist?('/etc/NIXOS')
   end
 
   global.ssh.forward_agent = true
@@ -65,12 +62,7 @@ Vagrant.configure('2') do |global|
 
       vb.cpus   = 2
       vb.gui    = false
-
-      vb.memory = if config.vm_type == 'minimal'
-                    2048
-                  else
-                    4096
-                  end
+      vb.memory = config.vm_type == 'minimal' ? 2048 : 4096
     end
 
     piwik.vm.provision 'bootstrap',
