@@ -2,7 +2,7 @@
 driver:
   name: vagrant
   synced_folders:
-    - ['../../plugins/', '/vagrant/plugins/']
+    - ['../../', '/vagrant/']
     - ['test/integration/fixtures/docroot/', '/srv/piwik/']
 
 provisioner:

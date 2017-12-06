@@ -15,9 +15,9 @@ module Piwik
     def check_requirements!
       return unless Command.up?
 
-      piwik_js = File.join(@config.source, 'piwik.js')
+      piwik_js = File.join(@config.get('source'), 'piwik.js')
 
-      error_source_missing(@config.source) unless File.exist?(piwik_js)
+      error_source_missing(@config.get('source')) unless File.exist?(piwik_js)
     end
 
     private
@@ -25,7 +25,7 @@ module Piwik
     def error_source_missing(source)
       @ui.error "Piwik not found at location '#{source}'"
       @ui.info ''
-      @ui.info 'Please update your config.rb or download the source.'
+      @ui.info 'Please update your config.yml or download the source.'
       @ui.info 'If your system is configured, this command should work:'
       @ui.info ''
 

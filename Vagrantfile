@@ -4,7 +4,7 @@
 
 Kernel.load(File.expand_path('./plugins/piwik.rb', File.dirname(__FILE__)))
 
-config_file = File.expand_path('./config.rb', File.dirname(__FILE__))
+config_file = File.expand_path('./config.yml', File.dirname(__FILE__))
 config      = Piwik::Config.new(config_file)
 vm          = Piwik::DevVM.new(config)
 
@@ -24,19 +24,19 @@ Vagrant.configure('2') do |global|
 
   global.ssh.forward_agent = true
 
-  global.vm.define config.vm_name do |piwik|
+  global.vm.define config.get('vm_name') do |piwik|
     piwik.vm.box      = 'threatstack/ubuntu-14.04-amd64'
-    piwik.vm.hostname = config.server_name
+    piwik.vm.hostname = config.get('server_name')
 
-    piwik.vm.network 'private_network', ip: config.vm_ip
+    piwik.vm.network 'private_network', ip: config.get('vm_ip')
 
-    piwik.vm.synced_folder config.source,
+    piwik.vm.synced_folder config.get('source'),
                            '/srv/piwik',
                            owner: 'vagrant',
                            group: 'vagrant'
 
-    if File.directory?(File.expand_path(config.source_device_detector))
-      piwik.vm.synced_folder config.source_device_detector,
+    if File.directory?(File.expand_path(config.get('source_device_detector')))
+      piwik.vm.synced_folder config.get('source_device_detector'),
                              '/srv/device-detector',
                              owner: 'vagrant',
                              group: 'vagrant'
@@ -44,9 +44,10 @@ Vagrant.configure('2') do |global|
       chef_run_list << 'recipe[piwik-device-detector]'
     end
 
-    if config.plugin_glob && config.plugin_pattern
-      Dir.glob(config.plugin_glob).each do |glob|
-        plugin = config.plugin_pattern.match(File.basename(glob))[1]
+    if config.get('plugin_glob') && config.get('plugin_pattern')
+      Dir.glob(config.get('plugin_glob')).each do |glob|
+        plugin_re = Regexp.new(config.get('plugin_pattern'))
+        plugin    = plugin_re.match(File.basename(glob))[1]
 
         continue unless plugin
 
@@ -58,11 +59,11 @@ Vagrant.configure('2') do |global|
     end
 
     piwik.vm.provider 'virtualbox' do |vb|
-      vb.customize ['modifyvm', :id, '--name', config.vm_name]
+      vb.customize ['modifyvm', :id, '--name', config.get('vm_name')]
 
       vb.cpus   = 2
       vb.gui    = false
-      vb.memory = config.vm_type == 'minimal' ? 2048 : 4096
+      vb.memory = config.get('vm_type') == 'minimal' ? 2048 : 4096
     end
 
     piwik.vm.provision 'bootstrap',

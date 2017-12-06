@@ -2,7 +2,7 @@
 driver:
   name: docker
   volume:
-    - <%= Dir::pwd %>/../../plugins:/vagrant/plugins:z
+    - <%= Dir::pwd %>/../..:/vagrant:z
     - <%= Dir::pwd %>/test/integration/fixtures/docroot:/srv/piwik:z
 
 provisioner:
