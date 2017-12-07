@@ -75,6 +75,16 @@ Vagrant.configure('2') do |global|
     piwik.vm.provision 'chef_solo' do |chef|
       chef.cookbooks_path = %w[cookbooks berks-cookbooks]
       chef.run_list = chef_run_list
+
+      chef.json = {
+        piwik: {
+          mysql_database: config.get('mysql_database'),
+          mysql_password: config.get('mysql_password'),
+          mysql_username: config.get('mysql_username'),
+          server_name:    config.get('server_name'),
+          vm_type:        config.get('vm_type')
+        }
+      }
     end
   end
 end
