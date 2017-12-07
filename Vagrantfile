@@ -49,9 +49,9 @@ Vagrant.configure('2') do |global|
     if config.get('plugin_glob') && config.get('plugin_pattern')
       Dir.glob(config.get('plugin_glob')).each do |glob|
         plugin_re = Regexp.new(config.get('plugin_pattern'))
-        plugin    = plugin_re.match(File.basename(glob))[1]
+        plugin    = plugin_re.match(File.basename(glob))
 
-        continue unless plugin
+        next unless plugin
 
         piwik.vm.synced_folder glob,
                                "/srv/piwik/plugins/#{plugin}",
