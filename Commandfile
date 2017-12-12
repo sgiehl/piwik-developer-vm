@@ -1,9 +1,9 @@
-Kernel.load(File.expand_path('./plugins/piwik.rb', File.dirname(__FILE__)))
+Kernel.load(File.expand_path('./plugins/piwik.rb', @env.root_path))
 
 chef_run_list  = ['recipe[piwik]']
 config         = Piwik::Config.new
-config_default = File.expand_path('./config.yml', File.dirname(__FILE__))
-config_local   = File.expand_path('./config.local.yml', File.dirname(__FILE__))
+config_default = File.expand_path('./config.yml', @env.root_path)
+config_local   = File.expand_path('./config.local.yml', @env.root_path)
 
 config.parse_file(config_default) if File.exist?(config_default)
 config.parse_file(config_local) if File.exist?(config_local)
