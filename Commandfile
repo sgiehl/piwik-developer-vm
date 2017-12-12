@@ -1,7 +1,12 @@
-Kernel.load(File.expand_path('./plugins/piwik.rb', @env.root_path))
+Kernel.load(File.expand_path('./plugins/piwik.rb', File.dirname(__FILE__)))
 
-config_file = File.expand_path('./config.rb', @env.root_path)
-config      = Piwik::Config.new(config_file)
+chef_run_list  = ['recipe[piwik]']
+config         = Piwik::Config.new
+config_default = File.expand_path('./config.yml', File.dirname(__FILE__))
+config_local   = File.expand_path('./config.local.yml', File.dirname(__FILE__))
+
+config.parse_file(config_default) if File.exist?(config_default)
+config.parse_file(config_local) if File.exist?(config_local)
 
 command 'console',
     desc: 'Run a Piwik console command',
@@ -12,27 +17,27 @@ command 'dump-export',
     desc: 'Dumps the piwik database currently used by the machine',
     script: %([ -d /vagrant/sqldumps ] || mkdir /vagrant/sqldumps;
               mysqldump \
-                  -u#{config.mysql_username} \
-                  -p#{config.mysql_password} \
-                  #{config.mysql_database} \
-              > /vagrant/sqldumps/#{config.mysql_database}.sql)
+                  -u#{config.get('mysql_username')} \
+                  -p#{config.get('mysql_password')} \
+                  #{config.get('mysql_database')} \
+              > /vagrant/sqldumps/#{config.get('mysql_database')}.sql)
 
 command 'dump-import',
     desc: 'Imports a recently created dump (from "dump-export")',
-    script: %([ -f /vagrant/sqldumps/#{config.mysql_database}.sql ] \
+    script: %([ -f /vagrant/sqldumps/#{config.get('mysql_database')}.sql ] \
                   && mysql \
-                         -u#{config.mysql_username} \
-                         -p#{config.mysql_password} \
-                         #{config.mysql_database} \
-                     < /vagrant/sqldumps/#{config.mysql_database}.sql \
+                         -u#{config.get('mysql_username')} \
+                         -p#{config.get('mysql_password')} \
+                         #{config.get('mysql_database')} \
+                     < /vagrant/sqldumps/#{config.get('mysql_database')}.sql \
                   || true)
 
 command 'mysql',
     desc: 'Opens a mysql console',
-    script: %(mysql -u#{config.mysql_username} -p#{config.mysql_password} #{config.mysql_database})
+    script: %(mysql -u#{config.get('mysql_username')} -p#{config.get('mysql_password')} #{config.get('mysql_database')})
 
 # device-detector specific commands
-if File.directory?(File.expand_path(config.source_device_detector))
+if File.directory?(File.expand_path(config.get('source_device_detector')))
     command 'dd-tests',
         desc: 'Run a device detector tests',
         parameters: {},
