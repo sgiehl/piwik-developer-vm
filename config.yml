@@ -4,16 +4,16 @@
 # If you want to modify the values please
 # create a "config.local.yml" in the same folder
 vm_ip: 192.168.99.100
-vm_name: piwik
+vm_name: matomo
 vm_type: minimal
 
-server_name: dev.piwik.org
-source: ../piwik
+server_name: dev.matomo.org
+source: ../matomo
 source_device_detector: ../device-detector
 
-mysql_database: piwik
-mysql_password: piwik
-mysql_username: piwik
+mysql_database: matomo
+mysql_password: matomo
+mysql_username: matomo
 
-plugin_glob: ../{piwik-plugin,plugin}-*/
+plugin_glob: ../{matomo-plugin,plugin}-*/
 plugin_pattern: plugin-([a-zA-Z]*)$

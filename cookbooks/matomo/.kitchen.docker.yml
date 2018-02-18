@@ -2,7 +2,7 @@
 driver:
   name: docker
   volume:
-    - <%= Dir::pwd %>/test/integration/fixtures/docroot:/srv/piwik:z
+    - <%= Dir::pwd %>/test/integration/fixtures/docroot:/srv/matomo:z
 
 provisioner:
   name: chef_solo
@@ -14,5 +14,5 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[piwik::default]
+      - recipe[matomo::default]
     attributes:

@@ -1,7 +1,7 @@
-module Piwik
-  # Manages the Piwik box.
+module Matomo
+  # Manages the Matomo box.
   class DevVM
-    REPO = 'https://github.com/piwik/piwik.git'.freeze
+    REPO = 'https://github.com/matomo-org/matomo.git'.freeze
 
     def initialize(config)
       @config = config
@@ -15,15 +15,15 @@ module Piwik
     def check_requirements!
       return unless Command.up?
 
-      piwik_js = File.join(@config.get('source'), 'piwik.js')
+      matomo_js = File.join(@config.get('source'), 'piwik.js')
 
-      error_source_missing(@config.get('source')) unless File.exist?(piwik_js)
+      error_source_missing(@config.get('source')) unless File.exist?(matomo_js)
     end
 
     private
 
     def error_source_missing(source)
-      @ui.error "Piwik not found at location '#{source}'"
+      @ui.error "Matomo not found at location '#{source}'"
       @ui.info ''
       @ui.info 'Please update your config.yml or download the source.'
       @ui.info 'If your system is configured, this command should work:'

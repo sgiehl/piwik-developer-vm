@@ -1,7 +1,7 @@
 require 'yaml'
 
-module Piwik
-  # Configuration class for the Piwik box
+module Matomo
+  # Configuration class for the Matomo box
   class Config
     def initialize
       @data = {}

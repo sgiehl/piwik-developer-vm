@@ -22,4 +22,4 @@ script:
   - cookstyle ./cookbooks/
   - foodcritic ./cookbooks/
   - rubocop Vagrantfile ./plugins/
-  - cd ./cookbooks/piwik/ && KITCHEN_YAML='.kitchen.docker.yml' kitchen verify
+  - cd ./cookbooks/matomo/ && KITCHEN_YAML='.kitchen.docker.yml' kitchen verify

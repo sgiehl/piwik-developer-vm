@@ -3,7 +3,7 @@ include_recipe 'apt'
 
 packages = %w(git mysql-server php5 php5-curl php5-gd php5-mysql php5-xdebug)
 
-unless node['piwik']['vm_type'] == 'minimal'
+unless node['matomo']['vm_type'] == 'minimal'
   packages += %w(git-lfs openjdk-7-jre php5-redis)
 
   packagecloud_repo 'github/git-lfs' do
@@ -19,13 +19,13 @@ end
 # composer setup
 include_recipe 'composer::self_update'
 
-composer_project node['piwik']['docroot'] do
+composer_project node['matomo']['docroot'] do
   dev    true
   quiet  true
   action :install
 end
 
-unless node['piwik']['vm_type'] == 'minimal'
+unless node['matomo']['vm_type'] == 'minimal'
   # phantomjs setup
   include_recipe 'phantomjs2::default'
   # imagemagick setup
@@ -50,7 +50,7 @@ execute 'mysql_start' do # ~FC004
 end
 
 # php-fpm setup
-php_fpm_pool 'piwik' do
+php_fpm_pool 'matomo' do
   user  'vagrant'
   group 'vagrant'
 
@@ -60,50 +60,50 @@ php_fpm_pool 'piwik' do
 end
 
 # redis setup
-unless node['piwik']['vm_type'] == 'minimal'
+unless node['matomo']['vm_type'] == 'minimal'
   include_recipe 'redisio'
   include_recipe 'redisio::enable'
 end
 
 # application setup
-web_app 'piwik' do
-  server_name node['piwik']['server_name']
-  docroot     node['piwik']['docroot']
+web_app 'matomo' do
+  server_name node['matomo']['server_name']
+  docroot     node['matomo']['docroot']
 end
 
-execute 'piwik_database' do
+execute 'matomo_database' do
   command <<-DBSQL
   mysql -uroot -e '
-      CREATE DATABASE IF NOT EXISTS \`#{node['piwik']['mysql_database']}\`
+      CREATE DATABASE IF NOT EXISTS \`#{node['matomo']['mysql_database']}\`
   '
   DBSQL
 end
 
-execute 'piwik_database_user' do
+execute 'matomo_database_user' do
   command <<-USERSQL
   mysql -uroot -e '
-      GRANT ALL ON \`#{node['piwik']['mysql_database']}\`.*
-      TO "#{node['piwik']['mysql_username']}"@"localhost"
-      IDENTIFIED BY "#{node['piwik']['mysql_password']}";
+      GRANT ALL ON \`#{node['matomo']['mysql_database']}\`.*
+      TO "#{node['matomo']['mysql_username']}"@"localhost"
+      IDENTIFIED BY "#{node['matomo']['mysql_password']}";
   '
   USERSQL
 end
 
-unless node['piwik']['vm_type'] == 'minimal'
-  execute 'piwik_tests_database' do
+unless node['matomo']['vm_type'] == 'minimal'
+  execute 'matomo_tests_database' do
     command <<-DBSQL
     mysql -uroot -e '
-        CREATE DATABASE IF NOT EXISTS \`piwik_tests\`
+        CREATE DATABASE IF NOT EXISTS \`matomo_tests\`
     '
     DBSQL
   end
 
-  execute 'piwik_tests_database_user' do
+  execute 'matomo_tests_database_user' do
     command <<-USERSQL
     mysql -uroot -e '
-        GRANT ALL ON \`piwik_tests\`.*
-        TO "piwik"@"localhost"
-        IDENTIFIED BY "piwik";
+        GRANT ALL ON \`matomo_tests\`.*
+        TO "matomo"@"localhost"
+        IDENTIFIED BY "matomo";
     '
     USERSQL
   end

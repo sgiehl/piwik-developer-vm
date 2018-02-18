@@ -1,7 +1,7 @@
-Kernel.load(File.expand_path('./plugins/piwik.rb', @env.root_path))
+Kernel.load(File.expand_path('./plugins/matomo.rb', @env.root_path))
 
-chef_run_list  = ['recipe[piwik]']
-config         = Piwik::Config.new
+chef_run_list  = ['recipe[matomo]']
+config         = Matomo::Config.new
 config_default = File.expand_path('./config.yml', @env.root_path)
 config_local   = File.expand_path('./config.local.yml', @env.root_path)
 
@@ -9,12 +9,12 @@ config.parse_file(config_default) if File.exist?(config_default)
 config.parse_file(config_local) if File.exist?(config_local)
 
 command 'console',
-    desc: 'Run a Piwik console command',
+    desc: 'Run a Matomo console command',
     parameters: { command: { optional: true } },
-    script: %(cd /srv/piwik && ./console %{command})
+    script: %(cd /srv/matomo && ./console %{command})
 
 command 'dump-export',
-    desc: 'Dumps the piwik database currently used by the machine',
+    desc: 'Dumps the matomo database currently used by the machine',
     script: %([ -d /vagrant/sqldumps ] || mkdir /vagrant/sqldumps;
               mysqldump \
                   -u#{config.get('mysql_username')} \

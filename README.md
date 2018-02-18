@@ -1,4 +1,4 @@
-# Piwik Developer VM
+# Matomo Developer VM
 
 ## License
 

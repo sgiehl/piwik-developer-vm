@@ -2,7 +2,7 @@
 driver:
   name: vagrant
   synced_folders:
-    - ['test/integration/fixtures/docroot/', '/srv/piwik/']
+    - ['test/integration/fixtures/docroot/', '/srv/matomo/']
 
 provisioner:
   name: chef_solo
@@ -13,5 +13,5 @@ platforms:
 suites:
   - name: default
     run_list:
-      - recipe[piwik::default]
+      - recipe[matomo::default]
     attributes:

@@ -1,6 +1,6 @@
-name 'piwik'
+name 'matomo'
 license 'Apache-2.0'
-description 'Installs Piwik.'
+description 'Installs Matomo.'
 version '1.0.0'
 chef_version '>= 12.0' if respond_to?(:chef_version)
 supports 'ubuntu'
