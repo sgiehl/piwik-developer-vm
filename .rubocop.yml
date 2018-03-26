@@ -1,3 +1,7 @@
 AllCops:
   Exclude:
     - 'berks-cookbooks/**/*'
+
+Metrics/BlockLength:
+  Exclude:
+    - 'Vagrantfile'

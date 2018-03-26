@@ -1,6 +1,5 @@
 # -*- mode: ruby -*-
 # vi: set ft=ruby :
-# rubocop:disable BlockLength
 
 Kernel.load(File.expand_path('./plugins/matomo.rb', File.dirname(__FILE__)))
 
