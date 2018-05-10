@@ -1,5 +1,6 @@
 source 'https://supermarket.chef.io'
 
+cookbook 'build-essential', '~> 8.1.1'
 cookbook 'apache2', '~> 5.0.0'
 cookbook 'apt', '~> 6.1.0'
 cookbook 'composer', '~> 2.6.0'
@@ -7,3 +8,4 @@ cookbook 'packagecloud', '~> 0.3.0'
 cookbook 'redisio', '~> 2.6.0'
 cookbook 'phantomjs2', '~> 1.1.0'
 cookbook 'imagemagick', '~> 0.2.0'
+cookbook 'perl', '~> 6.0.1'
