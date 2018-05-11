@@ -53,7 +53,7 @@ Vagrant.configure('2') do |global|
         next unless plugin
 
         matomo.vm.synced_folder glob,
-                                "/srv/matomo/plugins/#{plugin}",
+                                "/srv/matomo/plugins/#{plugin[1]}",
                                 owner: 'vagrant',
                                 group: 'vagrant'
       end
