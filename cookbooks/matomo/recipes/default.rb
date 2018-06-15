@@ -1,7 +1,7 @@
 # package setup
 include_recipe 'apt'
 
-packages = %w(git mysql-server php5 php5-curl php5-gd php5-mysql php5-xdebug)
+packages = %w(git unzip mysql-server php5 php5-curl php5-gd php5-mysql php5-xdebug)
 
 unless node['matomo']['vm_type'] == 'minimal'
   packages += %w(git-lfs openjdk-7-jre php5-redis)
@@ -117,3 +117,14 @@ include_recipe 'perl::default'
 cpan_module 'MaxMind::DB::Writer::Serializer'
 cpan_module 'File::Slurper'
 cpan_module 'Cpanel::JSON::XS'
+
+
+# install various packages required to render the new Matomo maps
+include_recipe 'nodejs::npm'
+npm_package 'd3-dsv'
+npm_package 'd3-geo-projection'
+npm_package 'ndjson-cli'
+npm_package 'shapefile'
+npm_package 'topojson'
+npm_package 'topojson-client'
+npm_package 'topojson-simplify'
