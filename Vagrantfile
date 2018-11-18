@@ -26,8 +26,9 @@ Vagrant.configure('2') do |global|
   global.ssh.forward_agent = true
 
   global.vm.define config.get('vm_name') do |matomo|
-    matomo.vm.box      = 'threatstack/ubuntu-14.04-amd64'
-    matomo.vm.hostname = config.get('server_name')
+      matomo.vm.box = "threatstack/ubuntu-16.04"
+      matomo.vm.box_version = "12.18.31"
+      matomo.vm.hostname = config.get('server_name')
 
     matomo.vm.network 'private_network', ip: config.get('vm_ip')
 

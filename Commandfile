@@ -13,6 +13,14 @@ command 'console',
     parameters: { command: { optional: true } },
     script: %(cd /srv/matomo && ./console %{command})
 
+command 'xdebug-disable',
+    desc: 'Enables xdebug',
+    script: %(sudo phpdismod xdebug)
+
+command 'xdebug-enable',
+    desc: 'Enables xdebug',
+    script: %(sudo phpenmod xdebug)
+
 command 'dump-export',
     desc: 'Dumps the matomo database currently used by the machine',
     script: %([ -d /vagrant/sqldumps ] || mkdir /vagrant/sqldumps;

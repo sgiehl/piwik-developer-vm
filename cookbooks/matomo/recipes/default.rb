@@ -1,10 +1,10 @@
 # package setup
 include_recipe 'apt'
 
-packages = %w(git mysql-server php5 php5-curl php5-gd php5-mysql php5-xdebug)
+packages = %w(git mysql-server php7.0 php7.0-mbstring php7.0-curl php7.0-gd php7.0-mysql php7.0-zip php-xdebug)
 
 unless node['matomo']['vm_type'] == 'minimal'
-  packages += %w(git-lfs openjdk-7-jre php5-redis)
+  packages += %w(git-lfs openjdk-8-jre php-redis)
 
   packagecloud_repo 'github/git-lfs' do
     type 'deb'
@@ -33,7 +33,7 @@ unless node['matomo']['vm_type'] == 'minimal'
 end
 
 # apache setup
-apache_module 'php5' do
+apache_module 'php7.0' do
   enable false
 end
 
