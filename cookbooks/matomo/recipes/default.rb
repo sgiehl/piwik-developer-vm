@@ -1,7 +1,13 @@
+# application setup
+web_app 'matomo' do
+  server_name node['matomo']['server_name']
+  docroot     node['matomo']['docroot']
+end
+
 # package setup
 include_recipe 'apt'
 
-packages = %w(git mysql-server php7.0 php7.0-mbstring php7.0-curl php7.0-gd php7.0-mysql php7.0-zip php-xdebug)
+packages = %w(git mysql-server php7.2 php7.2-mbstring php7.2-curl php7.2-gd php7.2-mysql php7.2-bz2 php7.2-zip php7.2-xdebug)
 
 unless node['matomo']['vm_type'] == 'minimal'
   packages += %w(git-lfs openjdk-8-jre php-redis)
@@ -33,7 +39,7 @@ unless node['matomo']['vm_type'] == 'minimal'
 end
 
 # apache setup
-apache_module 'php7.0' do
+apache_module 'php7.2' do
   enable false
 end
 
@@ -63,12 +69,6 @@ end
 unless node['matomo']['vm_type'] == 'minimal'
   include_recipe 'redisio'
   include_recipe 'redisio::enable'
-end
-
-# application setup
-web_app 'matomo' do
-  server_name node['matomo']['server_name']
-  docroot     node['matomo']['docroot']
 end
 
 execute 'matomo_database' do
