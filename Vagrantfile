@@ -72,6 +72,8 @@ Vagrant.configure('2') do |global|
                         path: 'bootstrap.sh'
 
     matomo.vm.provision 'chef_solo' do |chef|
+      # use fix version for now, as latest release fails with unaccepted license error
+      chef.version = "14.12.9"
       chef.cookbooks_path = %w[cookbooks berks-cookbooks]
       chef.run_list = chef_run_list
 
