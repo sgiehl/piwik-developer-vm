@@ -86,5 +86,18 @@ Vagrant.configure('2') do |global|
         }
       }
     end
+
+    # Mount some test folder as creating symlinks won't work on Windows
+    # Needed for running UI tests
+    if Vagrant::Util::Platform.windows?
+        matomo.vm.provision 'mount',
+                         type:   'shell',
+                         inline: 'for i in libs plugins tests misc;
+                                  do
+                                    mkdir -p /srv/matomo/tests/PHPUnit/proxy/$i
+                                    sudo mount --bind /srv/matomo/$i /srv/matomo/tests/PHPUnit/proxy/$i
+                                  done',
+                         run:    'always'
+     end
   end
 end
