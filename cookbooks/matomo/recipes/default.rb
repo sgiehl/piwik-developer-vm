@@ -7,10 +7,10 @@ end
 # package setup
 include_recipe 'apt'
 
-packages = %w(git mysql-server php7.2 php7.2-mbstring php7.2-curl php7.2-gd php7.2-mysql php7.2-bz2 php7.2-zip php7.2-xdebug)
+packages = %w(git curl mysql-server python2.7 php7.2 php7.2-mbstring php7.2-gd php7.2-mysql php7.2-bz2 php7.2-zip php7.2-xdebug)
 
 unless node['matomo']['vm_type'] == 'minimal'
-  packages += %w(git-lfs openjdk-8-jre php-redis)
+  packages += %w(git-lfs openjdk-8-jre php-redis php-soap)
 
   packagecloud_repo 'github/git-lfs' do
     type 'deb'
@@ -19,21 +19,31 @@ end
 
 packages.each do |pkg|
   package pkg do
+    action :install
   end
 end
 
-# composer setup
-include_recipe 'composer::self_update'
-
-composer_project node['matomo']['docroot'] do
-  dev    true
-  quiet  true
-  action :install
+# link python executable
+execute 'python_link' do
+  command '[ -L /usr/bin/python ] || ln -s /usr/bin/python2.7 /usr/bin/python'
 end
 
 unless node['matomo']['vm_type'] == 'minimal'
-  # phantomjs setup
-  include_recipe 'phantomjs2::default'
+  include_recipe "chrome"
+  include_recipe "nodejs"
+  include_recipe "nvm"
+
+  # install node.js v0.10.5
+  nvm_install '8'  do
+    from_source false
+    alias_as_default true
+    action :create
+  end
+  #execute 'npm_install' do
+  #  command 'cat package.json | sed -n -e \'/dependencies/,/\}/{ /dependencies/d; /\}/d; p; }\' | sed -e \'s/,//\' | awk \'{ print substr($1, 2, length($1)-3) "@" substr($2, 2, length($2)-2) }\' | xargs -n 1 npm install -g'
+  #  cwd '/srv/matomo/tests/lib/screenshot-testing'
+  #  user  'root'
+  #end
   # imagemagick setup
   include_recipe 'imagemagick::default'
 end
@@ -65,11 +75,25 @@ php_fpm_pool 'matomo' do
   listen_group 'vagrant'
 end
 
-# redis setup
-unless node['matomo']['vm_type'] == 'minimal'
-  include_recipe 'redisio'
-  include_recipe 'redisio::enable'
+# needs to be installed later
+package 'php7.2-curl' do
+  action :install
 end
+
+# composer setup
+include_recipe 'composer::self_update'
+
+composer_project node['matomo']['docroot'] do
+  dev    true
+  quiet  true
+  action :install
+end
+
+# redis setup
+#unless node['matomo']['vm_type'] == 'minimal'
+#  include_recipe 'redisio'
+#  include_recipe 'redisio::enable'
+#end
 
 execute 'matomo_database' do
   command <<-DBSQL
