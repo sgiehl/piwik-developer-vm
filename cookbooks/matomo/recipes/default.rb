@@ -30,20 +30,14 @@ end
 
 unless node['matomo']['vm_type'] == 'minimal'
   include_recipe "chrome"
-  include_recipe "nodejs"
-  include_recipe "nvm"
+  include_recipe "nodejs::nodejs_from_binary"
 
-  # install node.js v0.10.5
-  nvm_install '8'  do
-    from_source false
-    alias_as_default true
-    action :create
+  npm_package 'screenshot-testing' do
+    path '/srv/matomo/tests/lib/screenshot-testing'
+    json true
+    user 'vagrant'
   end
-  #execute 'npm_install' do
-  #  command 'cat package.json | sed -n -e \'/dependencies/,/\}/{ /dependencies/d; /\}/d; p; }\' | sed -e \'s/,//\' | awk \'{ print substr($1, 2, length($1)-3) "@" substr($2, 2, length($2)-2) }\' | xargs -n 1 npm install -g'
-  #  cwd '/srv/matomo/tests/lib/screenshot-testing'
-  #  user  'root'
-  #end
+
   # imagemagick setup
   include_recipe 'imagemagick::default'
 end
@@ -57,6 +51,11 @@ apache_module 'proxy' do
 end
 
 apache_module 'proxy_fcgi' do
+end
+
+# disable xdebug by default
+execute 'disable_xdebug' do
+  command 'sudo phpdismod xdebug'
 end
 
 # mysql setup
@@ -90,10 +89,10 @@ composer_project node['matomo']['docroot'] do
 end
 
 # redis setup
-#unless node['matomo']['vm_type'] == 'minimal'
-#  include_recipe 'redisio'
-#  include_recipe 'redisio::enable'
-#end
+unless node['matomo']['vm_type'] == 'minimal'
+  include_recipe 'redisio'
+  include_recipe 'redisio::enable'
+end
 
 execute 'matomo_database' do
   command <<-DBSQL
@@ -133,7 +132,8 @@ unless node['matomo']['vm_type'] == 'minimal'
   end
 end
 
-# install some packages required to run /matomo/tests/lib/geoip-files/writeTestFiles.pl
+# install some packages required to build GeoIP2 database files (mmdb)
+# required to run /matomo/tests/lib/geoip-files/writeTestFiles.pl
 include_recipe 'build-essential::default'
 build_essential 'install compilation tools' # required to compile modules
 

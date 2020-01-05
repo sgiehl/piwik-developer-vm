@@ -64,7 +64,47 @@ Vagrant.configure('2') do |global|
 
       vb.cpus   = 2
       vb.gui    = false
-      vb.memory = config.get('vm_type') == 'minimal' ? 2048 : 4096
+      vb.memory = config.get('vm_type') == 'minimal' ? 4096 : 8192
+    end
+
+    # Needed for running UI tests (on windows)
+    if Vagrant::Util::Platform.windows?
+        # Mount some test folders & files as creating symlinks won't work on Windows
+        matomo.vm.provision 'mount',
+         type:   'shell',
+         inline: 'for i in libs plugins tests misc;
+                  do
+                    rm -rf /srv/matomo/tests/PHPUnit/proxy/$i
+                    mkdir -p /srv/matomo/tests/PHPUnit/proxy/$i
+                    sudo mount --bind /srv/matomo/$i /srv/matomo/tests/PHPUnit/proxy/$i
+                  done',
+         run:    'always'
+
+        matomo.vm.provision 'mount_files',
+         type:   'shell',
+         inline: 'for i in piwik.js matomo.js;
+                  do
+                    rm -rf /srv/matomo/tests/PHPUnit/proxy/$i
+                    touch /srv/matomo/tests/PHPUnit/proxy/$i
+                    sudo mount --bind /srv/matomo/$i /srv/matomo/tests/PHPUnit/proxy/$i
+                  done',
+         run:    'always'
+
+        # ensure tmp folder is located within the vm to speed up access
+        matomo.vm.provision 'mount_tmp',
+          type:   'shell',
+          inline: 'mkdir -m 777 -p /srv/matomo_tmp
+                   sudo mount --bind /srv/matomo_tmp /srv/matomo/tmp/',
+          run:    'always'
+
+        # ensure node_modules are located within the vm (doesn't work located on windows fs, due to path depth)
+        matomo.vm.provision 'mount_node_modules',
+          type:   'shell',
+          inline: 'mkdir -m 777 -p /srv/matomo_node_modules
+                   mkdir -m 777 -p /srv/matomo/tests/lib/screenshot-testing/node_modules
+                   sudo mount --bind /srv/matomo_node_modules /srv/matomo/tests/lib/screenshot-testing/node_modules',
+          run:    'always'
+
     end
 
     matomo.vm.provision 'bootstrap',
@@ -86,18 +126,5 @@ Vagrant.configure('2') do |global|
         }
       }
     end
-
-    # Mount some test folder as creating symlinks won't work on Windows
-    # Needed for running UI tests
-    if Vagrant::Util::Platform.windows?
-        matomo.vm.provision 'mount',
-                         type:   'shell',
-                         inline: 'for i in libs plugins tests misc;
-                                  do
-                                    mkdir -p /srv/matomo/tests/PHPUnit/proxy/$i
-                                    sudo mount --bind /srv/matomo/$i /srv/matomo/tests/PHPUnit/proxy/$i
-                                  done',
-                         run:    'always'
-     end
   end
 end
