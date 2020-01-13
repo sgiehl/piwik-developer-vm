@@ -61,3 +61,16 @@ if File.directory?(File.expand_path(config.get('source_device_detector')))
         parameters: {},
         script: %(cd /srv/device-detector && php misc/readme-report.php)
 end
+
+searchengine_social_list_path = File.expand_path(config.get('source_searchengine_social_list'))
+
+if File.directory?(searchengine_social_list_path)
+    command 'mount-searchlist',
+        desc: 'Overwrites Matomos integrated search engine and socials list with configured repo',
+        parameters: {},
+        script: %(sudo mount --bind /srv/searchengine-and-social-list/ /srv/matomo/vendor/matomo/searchengine-and-social-list/)
+    command 'umount-searchlist',
+        desc: 'Removes overwrite of Matomos integrated search engine and socials list with configured repo',
+        parameters: {},
+        script: %(sudo umount /srv/matomo/vendor/matomo/searchengine-and-social-list/)
+end

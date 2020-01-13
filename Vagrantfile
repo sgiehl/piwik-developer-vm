@@ -45,6 +45,13 @@ Vagrant.configure('2') do |global|
       chef_run_list << 'recipe[matomo-device-detector]'
     end
 
+    if File.directory?(File.expand_path(config.get('source_searchengine_social_list')))
+      matomo.vm.synced_folder config.get('source_searchengine_social_list'),
+                              '/srv/searchengine-and-social-list',
+                              owner: 'vagrant',
+                              group: 'vagrant'
+    end
+
     if config.get('plugin_glob') && config.get('plugin_pattern')
       Dir.glob(config.get('plugin_glob')).each do |glob|
         plugin_re = Regexp.new(config.get('plugin_pattern'))

@@ -10,6 +10,7 @@ vm_type: minimal
 server_name: dev.matomo.io
 source: ../matomo
 source_device_detector: ../device-detector
+source_searchengine_social_list: ../searchengine-and-social-list
 
 mysql_database: matomo
 mysql_password: matomo
