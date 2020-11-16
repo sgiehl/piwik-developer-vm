@@ -1,0 +1,15 @@
+<VirtualHost *:80>
+  ServerName   <%= @server_name %>
+  DocumentRoot <%= @docroot %>
+
+  <Location />
+    Options FollowSymLinks
+    AllowOverride All
+
+    Require all granted
+  </Location>
+
+  Alias "/tests/PHPUnit/proxy/plugins" "<%= @docroot %>/plugins"
+
+  ProxyPassMatch "^/.*\.php(/.*)?$" "fcgi://localhost:9000/<%= @docroot.gsub(/^\/+|\/+$/, '') %>/"
+</VirtualHost>

@@ -1,16 +1,10 @@
-# application setup
-web_app 'matomo' do
-  server_name node['matomo']['server_name']
-  docroot     node['matomo']['docroot']
-end
-
 # package setup
 include_recipe 'apt'
 
-packages = %w(git curl mysql-server python2.7 php7.2 php7.2-mbstring php7.2-gd php7.2-mysql php7.2-bz2 php7.2-zip php7.2-xdebug)
+packages = %w(git curl mysql-server python2.7 php7.2 php7.2-curl php7.2-mbstring php7.2-gd php7.2-mysql php7.2-bz2 php7.2-zip php7.2-xdebug)
 
 unless node['matomo']['vm_type'] == 'minimal'
-  packages += %w(git-lfs openjdk-8-jre php-redis php-soap)
+  packages += %w(git-lfs openjdk-8-jre php7.2-redis php7.2-soap woff2)
 
   packagecloud_repo 'github/git-lfs' do
     type 'deb'
@@ -25,7 +19,7 @@ end
 
 # link python executable
 execute 'python_link' do
-  command '[ -L /usr/bin/python ] || ln -s /usr/bin/python2.7 /usr/bin/python'
+  command '[ -L /usr/bin/python ] || ln -s /usr/bin/python3 /usr/bin/python'
 end
 
 unless node['matomo']['vm_type'] == 'minimal'
@@ -43,14 +37,37 @@ unless node['matomo']['vm_type'] == 'minimal'
 end
 
 # apache setup
-apache_module 'php7.2' do
-  enable false
+apache2_module 'php7.2' do
+  action :disable
 end
 
-apache_module 'proxy' do
+# application setup
+apache2_install 'default'
+
+service 'apache2' do
+  service_name lazy { apache_platform_service_name }
+  supports restart: true, status: true, reload: true
+  action [:start, :enable]
 end
 
-apache_module 'proxy_fcgi' do
+apache2_module 'proxy'
+apache2_module 'proxy_fcgi'
+
+template 'matomo' do
+  source 'matomo.conf.erb'
+  path "#{apache_dir}/sites-available/matomo.conf"
+  variables(
+    server_name: node['matomo']['server_name'],
+    docroot: node['matomo']['docroot']
+  )
+end
+
+apache2_site '000-default' do
+  action :disable
+end
+
+apache2_site 'matomo' do
+  action :enable
 end
 
 # disable xdebug by default
@@ -74,11 +91,6 @@ php_fpm_pool 'matomo' do
   listen_group 'vagrant'
 end
 
-# needs to be installed later
-package 'php7.2-curl' do
-  action :install
-end
-
 # composer setup
 include_recipe 'composer::self_update'
 
@@ -94,6 +106,12 @@ unless node['matomo']['vm_type'] == 'minimal'
   include_recipe 'redisio::enable'
 end
 
+execute 'copy_fonts' do
+  command '[ -d /home/vagrant/.fonts ] || mkdir /home/vagrant/.fonts; cp -f /srv/matomo/tests/travis/fonts/* /home/vagrant/.fonts'
+  user  'vagrant'
+  group 'vagrant'
+end
+
 execute 'matomo_database' do
   command <<-DBSQL
   mysql -uroot -e '
@@ -102,10 +120,19 @@ execute 'matomo_database' do
   DBSQL
 end
 
+execute 'matomo_database_settings' do
+  command <<-DBSQL
+  mysql -uroot -e '
+      SET @@GLOBAL.innodb_flush_log_at_trx_commit = 2;
+      SET @@GLOBAL.max_allowed_packet = 67108864;
+  '
+  DBSQL
+end
+
 execute 'matomo_database_user' do
   command <<-USERSQL
   mysql -uroot -e '
-      GRANT ALL ON \`#{node['matomo']['mysql_database']}\`.*
+      GRANT ALL ON *.*
       TO "#{node['matomo']['mysql_username']}"@"localhost"
       IDENTIFIED BY "#{node['matomo']['mysql_password']}";
   '
@@ -121,23 +148,13 @@ unless node['matomo']['vm_type'] == 'minimal'
     DBSQL
   end
 
-  execute 'matomo_tests_database_user' do
-    command <<-USERSQL
-    mysql -uroot -e '
-        GRANT ALL ON \`matomo_tests\`.*
-        TO "matomo"@"localhost"
-        IDENTIFIED BY "matomo";
-    '
-    USERSQL
-  end
+  # install some packages required to build GeoIP2 database files (mmdb)
+  # required to run /matomo/tests/lib/geoip-files/writeTestFiles.pl
+  include_recipe 'build-essential::default'
+  build_essential 'install compilation tools' # required to compile modules
+
+  include_recipe 'perl::default'
+  cpan_module 'MaxMind::DB::Writer::Serializer'
+  cpan_module 'File::Slurper'
+  cpan_module 'Cpanel::JSON::XS'
 end
-
-# install some packages required to build GeoIP2 database files (mmdb)
-# required to run /matomo/tests/lib/geoip-files/writeTestFiles.pl
-include_recipe 'build-essential::default'
-build_essential 'install compilation tools' # required to compile modules
-
-include_recipe 'perl::default'
-cpan_module 'MaxMind::DB::Writer::Serializer'
-cpan_module 'File::Slurper'
-cpan_module 'Cpanel::JSON::XS'

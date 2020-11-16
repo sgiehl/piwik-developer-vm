@@ -13,6 +13,10 @@ config.parse_file(config_local) if File.exist?(config_local)
 
 Matomo::DevVM.new(config).check_requirements!
 
+if Vagrant::Util::Platform.windows? && !Vagrant.has_plugin?("vagrant-winnfsd")
+  raise  Vagrant::Errors::VagrantError.new, "vagrant-winnfsd plugin is missing. Please install it using 'vagrant plugin install vagrant-winnfsd' and rerun 'vagrant up'"
+end
+
 Vagrant.configure('2') do |global|
   if Vagrant.has_plugin?('vagrant-hostmanager')
     global.hostmanager.enabled           = true
@@ -33,23 +37,30 @@ Vagrant.configure('2') do |global|
 
     matomo.vm.synced_folder config.get('source'),
                             '/srv/matomo',
-                            owner: 'vagrant',
-                            group: 'vagrant'
+                            type:"nfs",
+                            mount_options: %w{rw,async,fsc,nolock,vers=3,udp,rsize=32768,wsize=32768,hard,noatime,actimeo=2}
 
     if File.directory?(File.expand_path(config.get('source_device_detector')))
       matomo.vm.synced_folder config.get('source_device_detector'),
                               '/srv/device-detector',
-                              owner: 'vagrant',
-                              group: 'vagrant'
+                              type:"nfs",
+                              mount_options: %w{rw,async,fsc,nolock,vers=3,udp,rsize=32768,wsize=32768,hard,noatime,actimeo=2}
 
       chef_run_list << 'recipe[matomo-device-detector]'
+    end
+
+    if File.directory?(File.expand_path(config.get('source_matomo_tracker')))
+      matomo.vm.synced_folder config.get('source_matomo_tracker'),
+                              '/srv/php-tracker',
+                              type:"nfs",
+                              mount_options: %w{rw,async,fsc,nolock,vers=3,udp,rsize=32768,wsize=32768,hard,noatime,actimeo=2}
     end
 
     if File.directory?(File.expand_path(config.get('source_searchengine_social_list')))
       matomo.vm.synced_folder config.get('source_searchengine_social_list'),
                               '/srv/searchengine-and-social-list',
-                              owner: 'vagrant',
-                              group: 'vagrant'
+                              type:"nfs",
+                              mount_options: %w{rw,async,fsc,nolock,vers=3,udp,rsize=32768,wsize=32768,hard,noatime,actimeo=2}
     end
 
     if config.get('plugin_glob') && config.get('plugin_pattern')
@@ -61,15 +72,15 @@ Vagrant.configure('2') do |global|
 
         matomo.vm.synced_folder glob,
                                 "/srv/matomo/plugins/#{plugin[1]}",
-                                owner: 'vagrant',
-                                group: 'vagrant'
+                                type:"nfs",
+                                mount_options: %w{rw,async,fsc,nolock,vers=3,udp,rsize=32768,wsize=32768,hard,noatime,actimeo=2}
       end
     end
 
     matomo.vm.provider 'virtualbox' do |vb|
       vb.customize ['modifyvm', :id, '--name', config.get('vm_name')]
 
-      vb.cpus   = 2
+      vb.cpus   = config.get('vm_type') == 'minimal' ? 2 : 4
       vb.gui    = false
       vb.memory = config.get('vm_type') == 'minimal' ? 4096 : 8192
     end
@@ -79,10 +90,11 @@ Vagrant.configure('2') do |global|
         # Mount some test folders & files as creating symlinks won't work on Windows
         matomo.vm.provision 'mount',
          type:   'shell',
-         inline: 'for i in libs plugins tests misc;
+         inline: 'for i in libs plugins tests misc node_modules;
                   do
-                    rm -rf /srv/matomo/tests/PHPUnit/proxy/$i
-                    mkdir -p /srv/matomo/tests/PHPUnit/proxy/$i
+                    if [[ ! -d "/srv/matomo/tests/PHPUnit/proxy/$i" ]]; then
+                        mkdir -p /srv/matomo/tests/PHPUnit/proxy/$i
+                    fi
                     sudo mount --bind /srv/matomo/$i /srv/matomo/tests/PHPUnit/proxy/$i
                   done',
          run:    'always'
@@ -91,7 +103,6 @@ Vagrant.configure('2') do |global|
          type:   'shell',
          inline: 'for i in piwik.js matomo.js;
                   do
-                    rm -rf /srv/matomo/tests/PHPUnit/proxy/$i
                     touch /srv/matomo/tests/PHPUnit/proxy/$i
                     sudo mount --bind /srv/matomo/$i /srv/matomo/tests/PHPUnit/proxy/$i
                   done',

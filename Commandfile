@@ -69,8 +69,21 @@ if File.directory?(searchengine_social_list_path)
         desc: 'Overwrites Matomos integrated search engine and socials list with configured repo',
         parameters: {},
         script: %(sudo mount --bind /srv/searchengine-and-social-list/ /srv/matomo/vendor/matomo/searchengine-and-social-list/)
-    command 'umount-searchlist',
+    command 'unmount-searchlist',
         desc: 'Removes overwrite of Matomos integrated search engine and socials list with configured repo',
         parameters: {},
         script: %(sudo umount /srv/matomo/vendor/matomo/searchengine-and-social-list/)
+end
+
+matomo_tracker_path = File.expand_path(config.get('source_matomo_tracker'))
+
+if File.directory?(matomo_tracker_path)
+    command 'mount-tracker',
+        desc: 'Overwrites Matomos integrated php tracker with configured repo',
+        parameters: {},
+        script: %(sudo mount --bind /srv/php-tracker/ /srv/matomo/vendor/matomo/matomo-php-tracker/)
+    command 'unmount-tracker',
+        desc: 'Removes overwrite of Matomos integrated php tracker with configured repo',
+        parameters: {},
+        script: %(sudo umount /srv/matomo/vendor/matomo/matomo-php-tracker/)
 end
