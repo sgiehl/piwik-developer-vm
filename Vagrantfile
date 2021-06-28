@@ -123,6 +123,14 @@ Vagrant.configure('2') do |global|
                    sudo mount --bind /srv/matomo_node_modules /srv/matomo/tests/lib/screenshot-testing/node_modules',
           run:    'always'
 
+        # ensure node_modules are located within the vm (doesn't work located on windows fs, due to path depth)
+        matomo.vm.provision 'mount_node_modules_angular',
+          type:   'shell',
+          inline: 'mkdir -m 777 -p /srv/matomo_node_modules_angular
+                   mkdir -m 777 -p /srv/matomo/tests/angularjs/node_modules
+                   sudo mount --bind /srv/matomo_node_modules_angular /srv/matomo/tests/angularjs/node_modules',
+          run:    'always'
+
     end
 
     matomo.vm.provision 'bootstrap',
@@ -133,6 +141,7 @@ Vagrant.configure('2') do |global|
       chef.arguments = "--chef-license accept"
       chef.cookbooks_path = %w[cookbooks berks-cookbooks]
       chef.run_list = chef_run_list
+      chef.install = false
 
       chef.json = {
         matomo: {

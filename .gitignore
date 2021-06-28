@@ -3,3 +3,4 @@
 sqldumps/
 Berksfile.lock
 config.local.yml
+*.log
