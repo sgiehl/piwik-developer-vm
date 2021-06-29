@@ -37,10 +37,10 @@ execute 'python_link' do
 end
 
 # composer setup
-include_recipe 'composer::self_update'
+#include_recipe 'composer::self_update'
 
-composer_project node['matomo']['docroot'] do
-  dev    true
-  quiet  true
-  action :install
-end
+#composer_project node['matomo']['docroot'] do
+#  dev    true
+#  quiet  true
+#  action :install
+#end
