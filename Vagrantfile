@@ -35,16 +35,24 @@ Vagrant.configure('2') do |global|
 
     matomo.vm.network 'private_network', ip: config.get('vm_ip')
 
+    mountoptions = false
+
+    if Vagrant::Util::Platform.windows?
+        mountoptions = %w{rw,async,fsc,nolock,vers=3,udp,rsize=32768,wsize=32768,hard,noatime,actimeo=2}
+    end
+
     matomo.vm.synced_folder config.get('source'),
                             '/srv/matomo',
                             type:"nfs",
-                            mount_options: %w{rw,async,fsc,nolock,vers=3,udp,rsize=32768,wsize=32768,hard,noatime,actimeo=2}
+                            mount_options: mountoptions,
+                            nfs_udp: false
 
     if File.directory?(File.expand_path(config.get('source_device_detector')))
       matomo.vm.synced_folder config.get('source_device_detector'),
                               '/srv/device-detector',
                               type:"nfs",
-                              mount_options: %w{rw,async,fsc,nolock,vers=3,udp,rsize=32768,wsize=32768,hard,noatime,actimeo=2}
+                              mount_options: mountoptions,
+                              nfs_udp: false
 
       chef_run_list << 'recipe[matomo-device-detector]'
     end
@@ -53,14 +61,16 @@ Vagrant.configure('2') do |global|
       matomo.vm.synced_folder config.get('source_matomo_tracker'),
                               '/srv/php-tracker',
                               type:"nfs",
-                              mount_options: %w{rw,async,fsc,nolock,vers=3,udp,rsize=32768,wsize=32768,hard,noatime,actimeo=2}
+                              mount_options: mountoptions,
+                              nfs_udp: false
     end
 
     if File.directory?(File.expand_path(config.get('source_searchengine_social_list')))
       matomo.vm.synced_folder config.get('source_searchengine_social_list'),
                               '/srv/searchengine-and-social-list',
                               type:"nfs",
-                              mount_options: %w{rw,async,fsc,nolock,vers=3,udp,rsize=32768,wsize=32768,hard,noatime,actimeo=2}
+                              mount_options: mountoptions,
+                              nfs_udp: false
     end
 
     if config.get('plugin_glob') && config.get('plugin_pattern')
@@ -73,7 +83,8 @@ Vagrant.configure('2') do |global|
         matomo.vm.synced_folder glob,
                                 "/srv/matomo/plugins/#{plugin[1]}",
                                 type:"nfs",
-                                mount_options: %w{rw,async,fsc,nolock,vers=3,udp,rsize=32768,wsize=32768,hard,noatime,actimeo=2}
+                                mount_options: mountoptions,
+                                nfs_udp: false
       end
     end
 
